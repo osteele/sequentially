@@ -4,7 +4,7 @@
 Function.K = Function.K || function(){};
 
 /**
- * Timing
+ * ^ Timing
  */
 
 /** Call this function after `ms` ms.   If this function is called with
