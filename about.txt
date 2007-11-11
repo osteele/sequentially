@@ -1,0 +1,7 @@
+I've been doing a lot of client/server/server programming lately.  That is, the
+client talks to one server (the application server --- it's the one that manages
+sessions and the db), but it also talks to my content network, and this is
+effectively a server --- it's the client that is in charge of asking the app server
+to update the content network (which it does by using SQS to post a processing
+request to yet another server, but that's another story...)
+

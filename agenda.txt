@@ -1,0 +1,7 @@
+Next:
+- test cases for mvar
+- index file
+- docs, examples
+- packaging
+- isolate pi-var
+- remove [].slice.call
