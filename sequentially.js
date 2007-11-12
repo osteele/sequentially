@@ -6,6 +6,11 @@
  * Version: 1.0
  */
 
+
+/**
+ * ^ Utilities
+ */
+
 // In case this library is used without Functional or Prototype.
 Function.K = Function.K || function(){};
 
@@ -18,6 +23,20 @@ Array.slice ||
         };
     })());
 
+/** Returns a function that calls this one with an incrementing
+ * zero-based counter spliced into the beginning of the argument
+ * list.  If there are additional arguments, they're prepended
+ * (after the counter) too.
+ */
+Function.prototype.incrementing = function() {
+    var fn = this,
+        args = Array.slice(arguments);
+    args.unshift(-1);
+    return function() {
+        args[0] += 1;
+        return fn.apply(this, args.concat(Array.slice(arguments)));
+    }
+}
 
 /**
  * ^ Timing
@@ -180,41 +199,47 @@ function MVar() {
         writers = [],
         takers = [];
     return {
+        // put if empty, else wait in line
         writer: function(writer) {
             value
                 ? writers.push(writer)
-                : writer(put);
+                : put(writer());
             return this;
         },
+        // apply `reader` to the value if full, else wait in line
         reader: function(reader) {
             value
                 ? reader(value[0])
                 : readers.push(reader);
             return this;
         },
+        // take the value if full, else wait in line
         taker: function(taker) {
             if (!value)
                 return takers.push(taker);
             var x = value[0];
             value = null;
             taker(value);
-            value || runNextWriter();
+            runNextWriter();
             return this;
         },
+        // put a value if empty, else wait in line with the writers
         put: put,
+        // `put` and return true if empty, else just return false
         tryPut: function(x) {
-            value ? false : (value = [x], true);
+            value ? false : (put(x), true);
         },
+        // `put` and return true if empty, else just return false
         tryTake: function(x) {
             var was = value;
             value = null;
+            runNextWriter();
             return was;
         }
     }
     function put(x) {
         if (value)
             return writers.push(Function.K(x));
-        value = [x];
         if (readers.length) {
             readers.each(function(fn){fn.call(null, x)});
             readers = [];
@@ -222,13 +247,14 @@ function MVar() {
         if (takers.length) {
             var taker = takers.shift();
             taker(x);
-        }
-        value || runNextWriter();
+            runNextWriter();
+        } else
+            value = [x];
     }
     function runNextWriter() {
         if (!value && writers.length) {
             var writer = writers.shift();
-            writer(put);
+            put(writer());
         }
     }
 }
