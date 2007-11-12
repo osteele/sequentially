@@ -15,7 +15,7 @@ function initialize() {
             /<span.*?<\/span>/,
         'If this message remains on the screen,');
     gExamples = new OSDoc.Examples({onSuccess: noteCompletion.saturate('examples'), target: $('examples')}).load('examples.js');
-    gDocs = new OSDoc.APIDoc({onSuccess: noteCompletion.saturate('docs'), target: $('docs')}).load('processes.js');
+    gDocs = new OSDoc.APIDoc({onSuccess: noteCompletion.saturate('docs'), target: $('docs')}).load('sequentially.js');
     initializeHeaderToggle();
     initializeTestLinks();
     

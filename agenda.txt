@@ -5,6 +5,7 @@ Next:
 - doc examples
 - isolate pi-var
 - remove [].slice.call
+- add schedule
 
 - rewrite header text, links
 - packaging

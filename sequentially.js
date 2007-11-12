@@ -64,9 +64,9 @@ Function.prototype.repeatedly = function(count, ms, options) {
  *
  * Options:
  *
- * after: call this function
+ * options.after: call this function after the last item
  *
- * thisObject: this object for function call
+ * options.thisObject: `this` object for function call
  */
 Array.prototype.sequentially = function(fn, ms, options) {
     var ar = this,
@@ -108,10 +108,12 @@ Function.prototype.maxtimes = function(count, after) {
  * units of ms.
  *
  * Options:
- *   backoff (false): if a number, increase the delay between calls by
- *     this factor.  A value of true is equivalent to 2.
- *   fromEnd (false): if true, the delay is from end to start instead
- *     of start-to-start.
+ *
+ * options.backoff (false): if a number, increase the delay between calls by
+ * this factor.  A value of true is equivalent to 2.
+ *
+ * options.fromEnd (false): if true, the delay is from end to start instead
+ * of start-to-start.
  */
 Function.prototype.throttled = function(interval, options) {
     interval = interval || 10;
