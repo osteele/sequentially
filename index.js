@@ -20,6 +20,30 @@ function initialize() {
     initializeHeaderToggle();
     initializeTestLinks();
     
+    var dragging = false, m = $('messages');
+    Event.observe('messages', 'mousedown', function(e) {
+        dragging = {x:e.clientX, y:e.clientY};
+        Event.observe(window, 'mouseover', mv);
+        Event.observe(window, 'mouseup', mve);
+        function mve() {
+            Event.stopObserving(window, 'mouseover', mv);
+            Event.stopObserving(window, 'mouseup', mve);
+        }
+    });
+    function mv(e) {
+        var dx = e.clientX - dragging.x,
+            dy = e.clientY - dragging.y;
+        if (!dx && !dy) return;
+        if (!dragging.o) {
+            Position.absolutize(m);
+            dragging.o = {x:parseInt(m.style.left), y:parseInt(m.style.top)};
+        }
+        var x = dragging.o.x + dx,
+            y = dragging.o.y + dy;
+        m.style.left = x + 'px';
+        m.style.top = y + 'px';
+    }
+    
     var clockDiv = $('clock');
     ticker();
     function ticker() {
