@@ -1,7 +1,23 @@
-/* Copyright 2007 by Oliver Steele.  Released under the MIT License. */
+/*
+ * Author: Oliver Steele
+ * Copyright: Copyright 2007 by Oliver Steele.  All rights reserved.
+ * License: MIT License
+ * Homepage: http://osteele.com/javascripts/sequentially
+ * Version: 1.0
+ */
 
 // In case this library is used without Functional or Prototype.
 Function.K = Function.K || function(){};
+
+// mozilla already supports this
+Array.slice ||
+    (Array.slice = (function() {
+        var slice = Array.prototype.slice;
+        return function(object) {
+            return slice.apply(object, slice.call(arguments, 1));
+        };
+    })());
+
 
 /**
  * ^ Timing
@@ -12,7 +28,7 @@ Function.K = Function.K || function(){};
  * finally called.
  */
 Function.prototype.eventually = function(ms) {
-    var args = Array.prototype.slice.call(arguments, 1),
+    var args = Array.slice(arguments, 1),
         self = this,
         fn = function() {self.apply(this, args)};
     setTimeout(fn, ms || 10);
@@ -22,7 +38,7 @@ Function.prototype.eventually = function(ms) {
  * passed.
  */
 Function.prototype.exactly = function(when) {
-    var args = Array.prototype.slice.call(arguments, 1),
+    var args = Array.slice(arguments, 1),
         self = this,
         fn = function() {self.apply(this, args)};
     setTimeout(fn, Math.max(10, when - new Date()));
@@ -117,14 +133,14 @@ Function.prototype.throttled = function(interval, options) {
         backoffRatio = options.backoff == true ? 2 : options.backoff;
     return function() {
         var self = this,
-            args = [].slice.call(arguments, 0);
-        run.defer();
+            args = Array.slice(arguments, 0);
+        setTimeout(run, 10);
         function run() {
             var now = new Date,
                 wait = interval - (now - lastTime);
             // false for wait==NaN
             if (wait > 0)
-                return run.defer(wait);
+                return setTimeout(run, wait);
             if (backoffRatio)
                 interval = Math.ceil(interval * backoffRatio);
             lastTime = now;

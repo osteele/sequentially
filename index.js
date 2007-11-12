@@ -33,7 +33,11 @@ function initialize() {
         e.innerHTML = e.innerHTML.replace(/(<\/div>)((?:.+?\n)+)/g, '$1<div class="runnable">$2</div>');
         $$('#examples .runnable').each(function(item) {
             Event.observe(item, 'click', function() {
-                eval(item.innerHTML);
+                try {
+                    eval(item.innerHTML);
+                } catch (e) {
+                    output(['<span class="error">', e, '</span>'].join(''));
+                }
             });
         });
     }

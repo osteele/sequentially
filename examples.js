@@ -1,7 +1,7 @@
 /* Copyright 2007 by Oliver Steele.  Released under the MIT License. */
 
 // `output` is defined in the page javascript.  It simply writes the
-// date and a message into an area near the top of this page.
+// date and a message into the message area on this page.
 output('message');
 
 // wait 1s, and then call output('done')
@@ -44,3 +44,8 @@ runPeriodically = false;
 }).
   maxtimes(3).
   repeatedly(50, 1000);
+
+// output() will be called at most once/second,
+// no matter how fast fn is called
+var fn = output.bind(null, 'throttled').throttled(1000);
+fn(); fn(); fn(); fn();

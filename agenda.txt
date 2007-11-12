@@ -2,13 +2,11 @@ Next:
 - until, while, combinators a{n}0 ab*
 - test cases for mvar
 - isolate pi-var
-- remove [].slice.call
-- add schedule
 
-- move messages
+- move messages out of the way
 - packaging
 
-- decide on binding protocol
+- arg binding is inconsistent
 
 Combinators:
 a*

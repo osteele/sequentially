@@ -5,3 +5,6 @@ syntax: glob
 *.orig
 
 processes.api.html
+
+*.min.js
+*.gz
