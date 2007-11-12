@@ -7,15 +7,16 @@
  * Modified: 2007-07-21
  */
 
-// debugging references
-var gExamples, gDocs;
-
 function initialize() {
     $('noscript').innerHTML = $('noscript').innerHTML.replace(
             /<span.*?<\/span>/,
         'If this message remains on the screen,');
-    gExamples = new OSDoc.Examples({onSuccess: noteCompletion.saturate('examples'), target: $('examples')}).load('examples.js');
-    gDocs = new OSDoc.APIDoc({onSuccess: noteCompletion.saturate('docs'), target: $('docs')}).load('sequentially.js');
+    new OSDoc.Examples().load('examples.js', {
+        onSuccess: formatExamples,
+        target: 'examples'});
+    new OSDoc.APIDoc().load('sequentially.js', {
+        onSuccess: noteCompletion.saturate('docs'),
+        target: 'docs'});
     initializeHeaderToggle();
     initializeTestLinks();
     
@@ -24,6 +25,15 @@ function initialize() {
     function ticker() {
         clockDiv.innerHTML = new Date().toLocaleTimeString();
         setTimeout(ticker, 1000 - new Date().getMilliseconds());
+    }
+    
+    function formatExamples() {
+        noteCompletion('examples');
+        var e = $('examples');
+        e.innerHTML = e.innerHTML.replace(/(<\/div>)((?:.+?\n)+)/g, '$1<div class="runnable">$2</div>');
+        $$('#examples .runnable').each(function(item) {
+            Event.observe(item, 'click', function() {console.info(item.innerHTML)});
+        });
     }
 }
 

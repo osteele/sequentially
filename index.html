@@ -30,56 +30,54 @@
       #intro {margin-bottom:5px}
       #intro p {padding: 5px}
 
-      table.messages {margin-left:auto; margin-right:auto}
-      table.messages td {vertical-align:top}
-      table.messages th {padding-right:20px}
-      table.messages td div {padding-right:20px}
+      table#messages {margin-left:auto; margin-right:auto}
+      table#messages td {vertical-align:top}
+      table#messages th {padding-right:20px}
+      table#messages td div {padding-right:20px}
       table.docs {background:#f9f9f9}
+
+      .runnable {color:blue}
+      .runnable:hover {color:green;cursor:hand}
     </style>
   </head>
   <body>
-    <h1>Sequentially Javascript</h1>
+    <h1>Sequentially</h1>
     <div class="navbar">
       <input type="checkbox" id="header-toggle" value="on" checked="checked"/> header
-      | <a href="http://osteele.com/archives/2007/07/functional-javascript">announcement</a>
+      | <a href="http://osteele.com/archives/2007/11/sequentially">announcement</a>
       | download:
       <a href="sequentially.min.js.gz">compressed (&lt;3K min gz)</a>
       | <a href="sequentially.js">source</a>
     </div>
     <div id="header">
       <div id="intro">
-      <p><dfn>Functional</dfn> is a library for functional programming
-      in JavaScript.  It defines the standard higher-order functions
-      such as <code>map</code>, <code>reduce</code> (aka
-      <code>foldl</code>), and <code>select</code> (aka
-      <code>filter</code>).  It also defines functions such as
-      <code>curry</code>, <code>rcurry</code>, and
-      <code>partial</code> for partial function application; and
-      <code>compose</code>, <code>guard</code>, and <code>until</code>
-      for <a
-      href="http://en.wikipedia.org/wiki/Function-level_programming">function-level
-      programming</a>.  And all these functions accept strings, such
-      as <code>'x -> x+1'</code>, <code>'x+1'</code>, or
-      <code>'+1'</code> as synonyms for the more verbose
-      <code>function(x) {return x+1}</code>.</p>
+        <p><dfn>Sequentially</dfn> is a library of temporal adverbs
+        for JavaScript.  It provides methods on a function that queue
+        it for deferred or repeated execution, and control the rate or
+        number of times that a function can be called.
+        <dfn>Sequentially</dfn> also contains implementations of
+        Haskell <dfn>MVars</dfn> and pi calculus named channels, that
+        can be used to coordinate multiple processes.
+        </p>
+      </div>
+      
+      <div id="noscript">
+        <span class="initial">You either have JavaScript turned off or
+        you're using an unsupported browser.  Either way, </span>
+        you're missing out on the rest of the page content, which is
+        generated from the source code.  Try <a
+        href="http://www.mozilla.org/products/firefox/">Mozilla
+        Firefox</a> or <a
+        href="http://www.apple.com/safari/download/">Apple Safari 3.0</a>.
+      </div>
     </div>
-
-    <div id="noscript">
-      <span class="initial">You either have JavaScript turned off or
-      you're using an unsupported browser.  Either way, </span>
-      you're missing out on the rest of the page content, which is
-      generated from the source code.  Try <a
-      href="http://www.mozilla.org/products/firefox/">Mozilla
-      Firefox</a> or <a
-      href="http://www.apple.com/safari/download/">Apple Safari 3.0</a>.
-    </div>
-
-    <table class="messages">
-      <tr><th>Now (hh:mm:ss)</th><th>Last Messages</th></tr>
-    <tr><td><div id="clock"/></div></td>
-    <td><div id="output"/></div></td></tr>
+    
+    <table id="messages">
+      <tr><th>Now (hh:mm:ss)</th><th>Recent Messages</th></tr>
+      <tr><td><div id="clock"></div></td>
+      <td><div id="output"></div></td></tr>
     </table>
-
+    
     <table class="docs">
       <tr>
         <td valign="top">

@@ -1,11 +1,18 @@
 Next:
 - run block when you click on it
-- rename -> sequentially?
+- until, while, combinators a{n}0 ab*
 - test cases for mvar
 - doc examples
 - isolate pi-var
 - remove [].slice.call
 - add schedule
 
+- table format
 - rewrite header text, links
 - packaging
+
+
+Combinators:
+a*
+a*b?0
+a*b*
