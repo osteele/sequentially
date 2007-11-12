@@ -1,7 +1,10 @@
 Next:
+- run block when you click on it
+- rename -> sequentially?
 - test cases for mvar
-- index file
-- docs, examples
-- packaging
+- doc examples
 - isolate pi-var
 - remove [].slice.call
+
+- rewrite header text, links
+- packaging

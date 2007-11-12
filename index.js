@@ -18,6 +18,13 @@ function initialize() {
     gDocs = new OSDoc.APIDoc({onSuccess: noteCompletion.saturate('docs'), target: $('docs')}).load('processes.js');
     initializeHeaderToggle();
     initializeTestLinks();
+    
+    var clockDiv = $('clock');
+    ticker();
+    function ticker() {
+        clockDiv.innerHTML = new Date().toLocaleTimeString();
+        setTimeout(ticker, 1000 - new Date().getMilliseconds());
+    }
 }
 
 function initializeHeaderToggle() {
@@ -55,13 +62,11 @@ function noteCompletion(flag) {
     }
 }
 
-
-function ieMode() {
-    if (navigator.appName != 'Microsoft Internet Explorer') return;
-    window.resetGradient = Functional.I;
-    var e = $('ie-warning');
-    e.show();
-    Event.observe($$('#ie-warning .close')[0], 'click', e.hide.bind(e).saturate());
+function output(msg) {
+    var now = new Date;
+    $('output').innerHTML = new Date().toLocaleTimeString() +
+                             (msg == undefined ? '' : ': ' + msg) + '<br/>' +
+        $('output').innerHTML.split(/<br\/?>/).slice(0,5).join('<br/>');
 }
 
 

@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <title>Functional Javascript</title>
+    <title>Sequentially</title>
     <script type="text/javascript" src="/javascripts/prototype.js"></script>
     <script type="text/javascript" src="../functional/functional.min.js"></script>
     <script type="text/javascript" src="../gradients.js"></script>
@@ -30,18 +30,21 @@
       #footer {color:#888; margin-top:2em; padding-top:2px; border-top:1px solid; font-size:small; text-align:center}
       #intro {margin-bottom:5px}
       #intro p {padding: 5px}
-      table {background:#f9f9f9}
+
+      table.messages {margin-left:auto; margin-right:auto}
+      table.messages td {vertical-align:top}
+      table.messages th {margin-right:20px}
+      table.docs {background:#f9f9f9}
     </style>
   </head>
   <body>
-    <h1>Javascript Processes</h1>
+    <h1>Sequentially Javascript</h1>
     <div class="navbar">
       <input type="checkbox" id="header-toggle" value="on" checked="checked"/> header
       | <a href="http://osteele.com/archives/2007/07/functional-javascript">announcement</a>
-      | <a href="http://code.google.com/p/functional-javascript/">project page</a>
       | download:
-      <a href="functional.min.js.gz">compressed (<3K min gz)</a>
-      | <a href="functional.src.gz">source</a>
+      <a href="sequentially.min.js.gz">compressed (&lt;3K min gz)</a>
+      | <a href="sequentially.js">source</a>
     </div>
     <div id="header">
       <div id="intro">
@@ -60,7 +63,7 @@
       <code>'+1'</code> as synonyms for the more verbose
       <code>function(x) {return x+1}</code>.</p>
     </div>
-    
+
     <div id="noscript">
       <span class="initial">You either have JavaScript turned off or
       you're using an unsupported browser.  Either way, </span>
@@ -70,7 +73,14 @@
       Firefox</a> or <a
       href="http://www.apple.com/safari/download/">Apple Safari 3.0</a>.
     </div>
-    <table>
+
+    <table class="messages">
+      <tr><th>Now (hh:mm:ss)</th><th>Last Messages</th></tr>
+    <tr><td><div id="clock"/></div></td>
+    <td><div id="output"/></div></td></tr>
+    </table>
+
+    <table class="docs">
       <tr>
         <td valign="top">
           <h2>API Documentation <span class="download">(<a href="functional.js">source</a>)</span></h2>
