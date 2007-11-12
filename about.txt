@@ -5,3 +5,8 @@ effectively a server --- it's the client that is in charge of asking the app ser
 to update the content network (which it does by using SQS to post a processing
 request to yet another server, but that's another story...)
 
+I decided that Erlang had the right idea.
+
+I never really got used to threads.  The experience of programming with multiple threads was frustrating for me.  The parts of the program that worked with synchronization were never integrated with the parts that weren't, and I continually had to move the firewall between the synchronized and thread-blind portion of the program.  (Sort of like the const/mutable firewall in C, or the Monad/expression firewall in Haskell.)
+
+I find it much more intuitive to think in terms of these little workers and waiters and watchers and listeners that you spin off.  It's the daemon idea from AI. 
