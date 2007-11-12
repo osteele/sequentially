@@ -13,9 +13,7 @@
 - pi examples
 
 * Interaction
-- fix outputter to re-bind src
 - show all sources from source or message
-- message dragging is slow, broken in Safari
 
 * Text
 - eventually vs. fork --- change it to run()?

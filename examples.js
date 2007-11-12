@@ -10,10 +10,8 @@ output('message');
 // `outputter` creates a function that calls `output` with an extra string.
 // We use it in the examples to make it easier to see which expression a
 // message is coming from.
-// [Prototype (and lots of other libraries) defines `bind` --- this library
-// doesn't.  `bind` creates a new function with some built-in parameters.]
-outputter = function(msg){return output.bind(null, msg)}
-outputter('outputter')('argument');
+var fn = outputter('outputter');
+fn('argument');
 
 // Finally, this library *does* define `incrementing` (and the rest
 // of the functions that are used below).  It calls its basis function

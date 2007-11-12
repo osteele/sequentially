@@ -31,19 +31,27 @@
       #intro p {padding: 5px}
 
       #messages {position:fixed; right:5px; bottom:5px; border:1px solid transparent}
-      #messages {background:white;border:1px solid gray; z-index:1; cursor:move}
+      #messages {background:white;border:1px solid gray;}
+      #messages.left {left:5px; right:inherit}
+      #messages #l, #messages #r {position:absolute; top:2px; cursor:pointer; color:gray; font-size:large}
+      #messages #l {display:block; left:3px}
+      #messages #r {display:none; right:3px}
+      #messages #l:hover, #messages #r:hover {color:blue}
+      #messages.left #l {display:none}
+      #messages.left #r {display:block}
       #messages td {vertical-align:top}
       #messages th {padding-right:20px}
       #messages td div {padding-right:20px}
       #messages .error {color:red}
-      #messages .src {color:blue}
+      #messages .src {color:blue; cursor:pointer}
+      #messages .src:hover {opacity:1}
       #messages .src:hover, #messages .selected {color:green}
 
       table.docs {background:#f9f9f9}
 
       .runnable {color:blue;border:2px solid white}
-      .runnable.selected {color:green}
-      .runnable:hover {background:#8f8;cursor:pointer;border:2px solid green}
+      .runnable.selected {color:green; background:#dfd}
+      .runnable:hover {cursor:pointer; background:#8f8; border:2px solid green}
 
       .timestamp {font-variant:small-caps; font-size:small; color:gray}
 
@@ -67,7 +75,7 @@
         count at which a function can be called.</p>
         <P><dfn>Sequentially</dfn> also contains implementations of
         Haskell <dfn><a href="http://www.haskell.org/ghc/docs/latest/html/libraries/base-3.0.0.0/Control-Concurrent-MVar.html">MVars</a></dfn> and <a
-        href="http://en.wikipedia.org/wiki/Pi-calculus">pi-calculus</a>
+        href="http://en.wikipedia.org/wiki/Pi-calculus">&pi;-calculus</a>
         <dfn>named channels</dfn>, that can each be used to coordinate
         data flow among asynchronously-scheduled functions.</p>
       </div>
@@ -84,7 +92,7 @@
     </div>
 
     <table id="messages">
-      <tr><th>Recent Messages (<span id="clock" class="timestamp"></span>)</th></tr>
+      <tr><th><span id="l">&larr;</span>Recent Messages (<span id="clock" class="timestamp"></span>)<span id="r">&rarr;</span></th></tr>
       <tr><td>
       <div id="output"></div></td></tr>
     </table>
@@ -97,7 +105,7 @@
         </td>
         <td valign="top">
           <h2>Examples <span class="download">(<a href="examples.js">source</a>)</span></h2>
-          <p>Click on a block to execute it.  Mouse over a message to highlight the blcok that it they came from.</p>
+          <p>Click on a block to execute it.  Mouse over a message to highlight the block that it they came from.</p>
           <div id="examples" class="osdoc examples" style="z-index:10">Examples failed to load.</div>
         </td>
       </tr>

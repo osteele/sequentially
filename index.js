@@ -20,29 +20,12 @@ function initialize() {
     initializeHeaderToggle();
     initializeTestLinks();
     
-    var dragging = false, m = $('messages');
-    Event.observe('messages', 'mousedown', function(e) {
-        dragging = {x:e.clientX, y:e.clientY};
-        Event.observe(window, 'mouseover', mv);
-        Event.observe(window, 'mouseup', mve);
-        function mve() {
-            Event.stopObserving(window, 'mouseover', mv);
-            Event.stopObserving(window, 'mouseup', mve);
-        }
+    Event.observe('l', 'click', function() {
+        Element.addClassName('messages', 'left');
     });
-    function mv(e) {
-        var dx = e.clientX - dragging.x,
-            dy = e.clientY - dragging.y;
-        if (!dx && !dy) return;
-        if (!dragging.o) {
-            Position.absolutize(m);
-            dragging.o = {x:parseInt(m.style.left), y:parseInt(m.style.top)};
-        }
-        var x = dragging.o.x + dx,
-            y = dragging.o.y + dy;
-        m.style.left = x + 'px';
-        m.style.top = y + 'px';
-    }
+    Event.observe('r', 'click', function() {
+        Element.removeClassName('messages', 'left');
+    });
     
     var clockDiv = $('clock');
     ticker();
@@ -56,19 +39,22 @@ function initialize() {
         var e = $('examples');
         e.innerHTML = e.innerHTML.replace(/(<\/div>)((?:.+?\n)+)/g, '$1<div class="runnable">$2</div>');
         $$('#examples .runnable').each(function(item) {
-            Event.observe(item, 'click', function() {
+            Event.observe(item, 'click', fn);
+            fn();
+            function fn() {
                 function o() {
                     //console.info(item);
                     output.src = item;
                     output.apply(null, arguments);
                 }
                 try {
-                    with ({output:o})
+                    with ({output:o,
+                           outputter:function(msg){return o.bind(null, msg)}})
                         eval(item.innerHTML);
                 } catch (e) {
                     output(['<span class="error">', e, '</span>'].join(''));
                 }
-            });
+            }
         });
     }
 }
@@ -139,6 +125,7 @@ function output() {
                 Element.removeClassName(elt, 'selected');
             });
             Element.addClassName(src, 'selected');
+            Element.scrollTo(src);
         }
         elt.onmouseout = function() {
             $$('#examples .selected').each(function(elt) {
