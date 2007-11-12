@@ -68,6 +68,25 @@ Function.prototype.repeatedly = function(count, ms, options) {
     }
 }
 
+/** Sequentially apply this function to each element of `array`,
+ * every `ms` ms.  See `Array#sequentially` for additional `options`.
+ */
+Function.prototype.sequentially = function(array, ms, options) {
+    return array.sequentially(this, ms, options);
+}
+
+/** Call each function in `array`, an array of functions. */
+Function.sequentially = function(array, ms, options) {
+    var ix = 0,
+        len = array.length;
+    options = options || {};
+    next.periodically(ms);
+    function next() {
+        if (ix >= len) return ((options.after||Function.K)(), false);
+        array[ix].call(options.thisObject, ix++);
+    }
+}
+
 /** Apply `fn` to each element of this array, every `ms` ms.
  * Ignores the results.  `fn` is applied to `options.thisObject`
  * (as `this`), the array element, and its index.
@@ -79,13 +98,14 @@ Function.prototype.repeatedly = function(count, ms, options) {
  * options.thisObject: `this` object for function call
  */
 Array.prototype.sequentially = function(fn, ms, options) {
-    var ar = this,
+    var array = this,
         ix = 0;
     options = options || {};
     next.periodically(ms);
     function next() {
-        if (ix >= ar.length) return ((options.after||Function.K)(), false);
-        fn.call(options.thisObject, ar[ix], ix);
+        // recompute the length each time, in case it's changing
+        if (ix >= array.length) return ((options.after||Function.K)(), false);
+        fn.call(options.thisObject, array[ix], ix);
         ix += 1;
     }
 }

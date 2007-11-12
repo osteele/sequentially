@@ -1,14 +1,16 @@
-Next:
+* Next
+- promises and futures
 - until, while, combinators a{n}0 ab*
-- test cases for mvar
-- isolate pi-var
-
-- move messages out of the way
-- packaging
-
+- pi-var
+- combinators
+ 
+* Naming
 - arg binding is inconsistent
+- rename 'exactly', 'periodically'
 
-Combinators:
-a*
-a*b?0
-a*b*
+* Examples
+- test cases for mvar
+
+* Interaction
+- show source from message
+- message dragging is slow

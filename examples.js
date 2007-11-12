@@ -4,6 +4,8 @@
 // date and a message into the message area on this page.
 output('message');
 
+// ^ Deferred Evaluation
+
 // wait 1s, and then call output('done')
 output.eventually(
     1000,
@@ -18,10 +20,12 @@ var when = new Date();
 when.setSeconds(when.getSeconds()+1);
 output.exactly(when, 'exactly');
 
+// ^ Periodical Evaluation
+
 // run five times at 1s intervals
 output.repeatedly(5, 1000);
 
-// run while `runPeriodically` is not `false`
+// run while `runPeriodically` (below) is not `false`
 runPeriodically = true;
 (function() {
     output('periodically');
@@ -31,21 +35,37 @@ runPeriodically = true;
 // evaluate this to turn off the loop above
 runPeriodically = false;
 
-// iterate over the elements of an array
-['a', 'b', 'c'].sequentially(
-    function(elt, ix){
-        output('sequentially', ix, elt);
-    }, 1000);
+// ^ Sequential Execution
 
-// repeatedly calls this 50 times, but maxtimes filters all
+// Three different ways of applying a function to a sequence of elements:
+
+// Sequentially apply the argument function to the elements of this array.
+['a', 'b', 'c'].sequentially(
+    output.bind(null, '[...].sequentially'));
+
+// Sequentially apply this function to each element of the argument array.
+output.sequentially(['fn.sequentially a',
+                     'fn.sequentially b',
+                     'fn.sequentially c']);
+
+// Call each function sequentially.
+Function.sequentially([
+    output.bind(null, 'Function.sequentially first'),
+    output.bind(null, 'Function.sequentially second'),
+    output.bind(null, 'Function.sequentially third'),
+]);
+
+
+// ^ Throttling and other limits
+
+// repeatedly calls this 50 times, but `maxtimes` filters all
 // but the first three
-(function(counter) {
-    output('maxtimes', counter);
-}).
+output.bind(null, 'maxtimes').
   maxtimes(3).
-  repeatedly(50, 1000);
+  repeatedly(50);
 
 // output() will be called at most once/second,
 // no matter how fast fn is called
 var fn = output.bind(null, 'throttled').throttled(1000);
 fn(); fn(); fn(); fn();
+
