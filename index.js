@@ -32,7 +32,9 @@ function initialize() {
         var e = $('examples');
         e.innerHTML = e.innerHTML.replace(/(<\/div>)((?:.+?\n)+)/g, '$1<div class="runnable">$2</div>');
         $$('#examples .runnable').each(function(item) {
-            Event.observe(item, 'click', function() {console.info(item.innerHTML)});
+            Event.observe(item, 'click', function() {
+                eval(item.innerHTML);
+            });
         });
     }
 }
@@ -72,11 +74,15 @@ function noteCompletion(flag) {
     }
 }
 
-function output(msg) {
-    var now = new Date;
-    $('output').innerHTML = new Date().toLocaleTimeString() +
-                             (msg == undefined ? '' : ': ' + msg) + '<br/>' +
-        $('output').innerHTML.split(/<br\/?>/).slice(0,5).join('<br/>');
+function output() {
+    var msg = arguments.length ? Array.prototype.join.call(arguments, ' ') : null;
+    $('output').innerHTML = ['<span class="timestamp">',
+                             new Date().toLocaleTimeString(),
+                             '</span>',
+                             msg == null ? '' : ': ' + msg,
+                             '<br/>',
+                             $('output').innerHTML.split(/<br\/?>/).
+                             slice(0,5).join('<br/>')].join('');
 }
 
 

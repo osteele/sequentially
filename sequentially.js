@@ -10,13 +10,8 @@ Function.K = Function.K || function(){};
 /** Call this function after `ms` ms.   If this function is called with
  * additional arguments, they're passed to the basis function when it is
  * finally called.
- *
- * If you're using Prototype, it will replace this definition with one
- * that uses seconds instead of ms.  That's okay; nothing else in this
- * library depends on this.  (Except `defer`, which Prototype also
- * replaces.)  I find ms more convenient, though.
  */
-Function.prototype.delay = Function.prototype.delay || function(ms) {
+Function.prototype.eventually = function(ms) {
     var fn = this;
     if (arguments.length > 1) {
         var args = Array.prototype.slice.call(arguments, 1),
@@ -25,14 +20,6 @@ Function.prototype.delay = Function.prototype.delay || function(ms) {
     }
     setTimeout(fn, ms || 10);
 }
-
-/** If `defer` is not already defined, it is introduced as a synonym
- * for `delay`.  If you load Prototype, it will replace this definition;
- * its version uses second instead of ms, and doesn't curry the function
- * over the remaining arguments. That's okay; nothing else in this library
- * depends on this.
- */
-Function.prototype.defer = Function.prototype.defer || Function.prototype.delay;
 
 /** Call this function every `ms` ms until it returns `false`. */
 Function.prototype.periodically = function(ms) {

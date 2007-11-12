@@ -4,25 +4,27 @@
 // date and a message into an area near the top of this page.
 output('message');
 
-// wait 2000 ms, and then call output('done')
-output.delay(2000, 'done');
+// wait 1s, and then call output('done')
+output.eventually(1000, 'eventually from', new Date().toLocaleTimeString());
 
-// wait 2000 ms, and then call output with no arguments
-output.delay(2000);
+// wait 1s, and then call output with no arguments
+output.eventually(1000);
 
-// run infinitely for as long as `running` is true
-var running = true;
-(function() {output(); return running}).periodically(1000);
-
-// run this to turn off the loop above
-var running = false;
-
-// run five times
+// run five times at 1s intervals
 output.repeatedly(5, 1000);
 
+// run while `running` is not `false`
+running = true;
+(function() {output('periodically'); return running}).periodically(1000);
+
+// run this to turn off the loop above
+running = false;
+
 // iterate over the elements of an array
-['a', 'b', 'c'].sequentially(function(elt){output(elt)}, 1000);
+['a', 'b', 'c'].sequentially(function(elt, ix){
+    output('sequentially', ix, elt);
+}, 1000);
 
 // repeatedly calls this 50 times, but maxtimes filters all
 // but the first three
-(function(counter) {output(counter)}).maxtimes(3).repeatedly(50, 1000);
+(function(counter) {output('maxtimes', counter)}).maxtimes(3).repeatedly(50, 1000);

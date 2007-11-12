@@ -30,14 +30,16 @@
       #intro {margin-bottom:5px}
       #intro p {padding: 5px}
 
-      table#messages {margin-left:auto; margin-right:auto}
-      table#messages td {vertical-align:top}
-      table#messages th {padding-right:20px}
-      table#messages td div {padding-right:20px}
+      #messages {margin-left:auto; margin-right:auto}
+      #messages td {vertical-align:top}
+      #messages th {padding-right:20px}
+      #messages td div {padding-right:20px}
+
       table.docs {background:#f9f9f9}
 
-      .runnable {color:blue}
-      .runnable:hover {color:green;cursor:hand}
+      .runnable {color:blue;border:2px solid white;-moz-border-radius:5px; -webkit-border-radius:5px}
+      .runnable:hover {background:#8f8;cursor:pointer;border:2px solid green}
+      .timestamp {font-variant:small-caps; font-size:small; color:gray}
     </style>
   </head>
   <body>
@@ -74,7 +76,7 @@
     
     <table id="messages">
       <tr><th>Now (hh:mm:ss)</th><th>Recent Messages</th></tr>
-      <tr><td><div id="clock"></div></td>
+      <tr><td><div id="clock" class="timestamp"></div></td>
       <td><div id="output"></div></td></tr>
     </table>
     
