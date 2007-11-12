@@ -30,16 +30,19 @@
       #intro {margin-bottom:5px}
       #intro p {padding: 5px}
 
-      #messages {margin-left:auto; margin-right:auto}
+      #messages {position:fixed; right:5px; top:250px; border:1px solid transparent}
+      #messages:hover {background:white;border:1px solid gray; z-index:1}
       #messages td {vertical-align:top}
       #messages th {padding-right:20px}
       #messages td div {padding-right:20px}
 
       table.docs {background:#f9f9f9}
 
-      .runnable {color:blue;border:2px solid white;-moz-border-radius:5px; -webkit-border-radius:5px}
+      .runnable {color:blue;border:2px solid white}
       .runnable:hover {background:#8f8;cursor:pointer;border:2px solid green}
       .timestamp {font-variant:small-caps; font-size:small; color:gray}
+      
+      .runnable, #messages {-moz-border-radius:5px; -webkit-border-radius:5px}
     </style>
   </head>
   <body>
@@ -54,12 +57,14 @@
     <div id="header">
       <div id="intro">
         <p><dfn>Sequentially</dfn> is a library of temporal adverbs
-        for JavaScript.  It provides methods on a function that queue
-        it for deferred or repeated execution, and control the rate or
-        number of times that a function can be called.
+        for JavaScript.  It provides methods to queue a function for
+        deferred or repeated execution, and to control the rate or
+        number of times that it can be called.
         <dfn>Sequentially</dfn> also contains implementations of
-        Haskell <dfn>MVars</dfn> and pi calculus named channels, that
-        can be used to coordinate multiple processes.
+        Haskell <dfn>MVars</dfn> and <a
+        href="http://en.wikipedia.org/wiki/Pi-calculus">pi-calculus</a>
+        <dfn>named channels</dfn>, that can each be used to coordinate
+        asynchronous functions that share data.
         </p>
       </div>
       
@@ -75,9 +80,9 @@
     </div>
     
     <table id="messages">
-      <tr><th>Now (hh:mm:ss)</th><th>Recent Messages</th></tr>
-      <tr><td><div id="clock" class="timestamp"></div></td>
-      <td><div id="output"></div></td></tr>
+      <tr><th>Recent Messages (<span id="clock" class="timestamp"></span>)</th></tr>
+      <tr><td>
+      <div id="output"></div></td></tr>
     </table>
     
     <table class="docs">
@@ -88,10 +93,7 @@
         </td>
         <td valign="top">
           <h2>Usage <span class="download">(<a href="examples.js">source</a>)</span></h2>
-          <div id="examples" class="osdoc examples">Examples failed to load.</div>
-          <button id="e1">1. Event.observe</button>
-          <button id="e2">2. onclick</button>
-          <button id="e3">3. specialized alert fn</button>
+          <div id="examples" class="osdoc examples" style="z-index:10">Examples failed to load.</div>
         </td>
       </tr>
     </table>

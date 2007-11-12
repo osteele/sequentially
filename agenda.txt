@@ -1,16 +1,14 @@
 Next:
-- run block when you click on it
 - until, while, combinators a{n}0 ab*
 - test cases for mvar
-- doc examples
 - isolate pi-var
 - remove [].slice.call
 - add schedule
 
-- table format
-- rewrite header text, links
+- move messages
 - packaging
 
+- decide on binding protocol
 
 Combinators:
 a*

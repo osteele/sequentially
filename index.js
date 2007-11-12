@@ -75,14 +75,20 @@ function noteCompletion(flag) {
 }
 
 function output() {
-    var msg = arguments.length ? Array.prototype.join.call(arguments, ' ') : null;
-    $('output').innerHTML = ['<span class="timestamp">',
-                             new Date().toLocaleTimeString(),
-                             '</span>',
-                             msg == null ? '' : ': ' + msg,
-                             '<br/>',
-                             $('output').innerHTML.split(/<br\/?>/).
-                             slice(0,5).join('<br/>')].join('');
+    var msg = arguments.length ? Array.prototype.join.call(arguments, ' ') : '[no arguments]',
+        lines = arguments.callee.lines = arguments.callee.lines || [],
+        line = [
+            '<span class="timestamp">',
+            new Date().toLocaleTimeString(),
+            '</span>',
+            msg == null ? '' : ': ' + msg
+        ].join('');
+    lines.unshift(line);
+    lines.splice(20,lines.length);
+    $('output').innerHTML = lines.map(function(line, ix) {
+        var opacity = 1 - .95*ix/lines.length;
+        return ['<div style="opacity:', opacity,'">', line, '</div>'].join('');
+    }).join('');
 }
 
 

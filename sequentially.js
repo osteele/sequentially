@@ -12,13 +12,20 @@ Function.K = Function.K || function(){};
  * finally called.
  */
 Function.prototype.eventually = function(ms) {
-    var fn = this;
-    if (arguments.length > 1) {
-        var args = Array.prototype.slice.call(arguments, 1),
-            fn0 = fn,
-            fn = function() {fn0.apply(this, args)};
-    }
+    var args = Array.prototype.slice.call(arguments, 1),
+        self = this,
+        fn = function() {self.apply(this, args)};
     setTimeout(fn, ms || 10);
+}
+
+/** Call this function at Date `when`, or immediately if `when` has
+ * passed.
+ */
+Function.prototype.exactly = function(when) {
+    var args = Array.prototype.slice.call(arguments, 1),
+        self = this,
+        fn = function() {self.apply(this, args)};
+    setTimeout(fn, Math.max(10, when - new Date()));
 }
 
 /** Call this function every `ms` ms until it returns `false`. */
