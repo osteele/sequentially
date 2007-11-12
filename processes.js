@@ -34,25 +34,27 @@ Function.prototype.delay = Function.prototype.delay || function(ms) {
  */
 Function.prototype.defer = Function.prototype.defer || Function.prototype.delay;
 
-// Private helper for the functions below.
-Function.prototype.periodicallyUntil = function(ms) {
+/** Call this function every `ms` ms until it returns `false`. */
+Function.prototype.periodically = function(ms) {
     var fn = this,
         thread = setInterval(tick, ms||10);
     function tick() {
-        fn() || clearInterval(thread);
+        fn() == false && clearInterval(thread);
     }
 }
 
 /** Call this function every `ms` ms for a total of `count` times.
- * If `options.after` is defined, it is called last.
+ * If `options.after` is defined, it is called `ms` ms after the
+ * last call.
  */
-Function.prototype.repeated = function(count, ms, options) {
-    var fn = this;
-    options = option || {};
-    next.periodicallyUntil(ms);
+Function.prototype.repeatedly = function(count, ms, options) {
+    var fn = this,
+        ix = 0;
+    options = options || {};
+    next.periodically(ms);
     function next() {
-        if (count-- <= 0) return (options.after||Function.K)() || true;
-        fn.call(options.thisObject);
+        if (count-- <= 0) return ((options.after||Function.K)(), true);
+        fn.call(options.thisObject, ix++);
     }
 }
 
@@ -61,16 +63,19 @@ Function.prototype.repeated = function(count, ms, options) {
  * (as `this`), the array element, and its index.
  *
  * Options:
- *   after: call this function
- *   thisObject: this object for function call
+ *
+ * after: call this function
+ *
+ * thisObject: this object for function call
  */
 Array.prototype.sequentially = function(fn, ms, options) {
-    var ix = 0;
+    var ar = this,
+        ix = 0;
     options = options || {};
-    next.periodicallyUntil(ms);
+    next.periodically(ms);
     function next() {
-        if (ix >= this.length) return (options.after||Function.K)() || true;
-        fn.call(options.thisObject, this[ix], ix);
+        if (ix >= ar.length) return ((options.after||Function.K)(), false);
+        fn.call(options.thisObject, ar[ix], ix);
         ix += 1;
     }
 }
