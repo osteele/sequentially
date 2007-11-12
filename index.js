@@ -57,8 +57,14 @@ function initialize() {
         e.innerHTML = e.innerHTML.replace(/(<\/div>)((?:.+?\n)+)/g, '$1<div class="runnable">$2</div>');
         $$('#examples .runnable').each(function(item) {
             Event.observe(item, 'click', function() {
+                function o() {
+                    //console.info(item);
+                    output.src = item;
+                    output.apply(null, arguments);
+                }
                 try {
-                    eval(item.innerHTML);
+                    with ({output:o})
+                        eval(item.innerHTML);
                 } catch (e) {
                     output(['<span class="error">', e, '</span>'].join(''));
                 }
@@ -102,21 +108,47 @@ function noteCompletion(flag) {
     }
 }
 
+var genid = 0;
 function output() {
     var msg = arguments.length ? Array.prototype.join.call(arguments, ' ') : '[no arguments]',
         lines = arguments.callee.lines = arguments.callee.lines || [],
-        line = [
-            '<span class="timestamp">',
-            new Date().toLocaleTimeString(),
-            '</span>',
-            msg == null ? '' : ': ' + msg
-        ].join('');
+        src = arguments.callee.src;
+    if (src) {
+        arguments.callee.src = null;
+        var id = src.id;
+        if (!id)
+            id = src.id = '_o_' + ++genid;
+        msg = ['<span class="src" id="_s_', id, '">', msg, '</span>'].join('');
+    }
+    var line = [
+        '<span class="timestamp">',
+        new Date().toLocaleTimeString(),
+        ' </span>',
+        msg
+    ].join('');
     lines.unshift(line);
     lines.splice(20,lines.length);
     $('output').innerHTML = lines.map(function(line, ix) {
         var opacity = 1 - .95*ix/lines.length;
         return ['<div style="opacity:', opacity,'">', line, '</div>'].join('');
     }).join('');
+    $$('#output .src').each(function(elt) {
+        elt.onmouseover = elt.onclick = function() {
+            var src = $(elt.id.replace(/^_s_/, ''));
+            $$('#examples .selected').each(function(elt) {
+                Element.removeClassName(elt, 'selected');
+            });
+            Element.addClassName(src, 'selected');
+        }
+        elt.onmouseout = function() {
+            $$('#examples .selected').each(function(elt) {
+                Element.removeClassName(elt, 'selected');
+            });
+            $$('#messages .selected').each(function(elt) {
+                Element.removeClassName(elt, 'selected');
+            });
+        }
+    });
 }
 
 

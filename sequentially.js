@@ -11,8 +11,8 @@
  * ^ Utilities
  */
 
-// In case this library is used without Functional or Prototype.
-Function.K = Function.K || function(){};
+Function.I = function(x){return x};
+Function.K = function(x){return function(){return x}};
 
 // mozilla already supports this
 Array.slice ||
@@ -82,7 +82,7 @@ Function.prototype.repeatedly = function(count, ms, options) {
     options = options || {};
     next.periodically(ms);
     function next() {
-        if (count-- <= 0) return ((options.after||Function.K)(), true);
+        if (count-- <= 0) return ((options.after||Function.I)(), true);
         fn.call(options.thisObject, ix++);
     }
 }
@@ -101,7 +101,7 @@ Function.sequentially = function(array, ms, options) {
     options = options || {};
     next.periodically(ms);
     function next() {
-        if (ix >= len) return ((options.after||Function.K)(), false);
+        if (ix >= len) return ((options.after||Function.I)(), false);
         array[ix].call(options.thisObject, ix++);
     }
 }
@@ -123,7 +123,7 @@ Array.prototype.sequentially = function(fn, ms, options) {
     next.periodically(ms);
     function next() {
         // recompute the length each time, in case it's changing
-        if (ix >= array.length) return ((options.after||Function.K)(), false);
+        if (ix >= array.length) return ((options.after||Function.I)(), false);
         fn.call(options.thisObject, array[ix], ix);
         ix += 1;
     }
@@ -219,31 +219,31 @@ function MVar() {
                 return takers.push(taker);
             var x = value[0];
             value = null;
-            taker(value);
+            taker(x);
             runNextWriter();
             return this;
         },
         // put a value if empty, else wait in line with the writers
         put: put,
-        // `put` and return true if empty, else just return false
+        // `put` and return true if empty, else return false
         tryPut: function(x) {
             value ? false : (put(x), true);
         },
-        // `put` and return true if empty, else just return false
-        tryTake: function(x) {
+        // return false if empty, else take the value and returns it
+        // in a list
+        tryTake: function() {
             var was = value;
             value = null;
             runNextWriter();
             return was;
-        }
+        },
+        isEmpty: function() {return !value}
     }
     function put(x) {
         if (value)
             return writers.push(Function.K(x));
-        if (readers.length) {
-            readers.each(function(fn){fn.call(null, x)});
-            readers = [];
-        }
+        while (readers.length)
+            readers.shift().call(null, x);
         if (takers.length) {
             var taker = takers.shift();
             taker(x);

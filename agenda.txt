@@ -1,16 +1,34 @@
 * Next
 - promises and futures
 - until, while, combinators a{n}0 ab*
-- pi-var
-- combinators
- 
+- eventually vs. fork
+
 * Naming
+- rename -> 'frequently'?
 - arg binding is inconsistent
 - rename 'exactly', 'periodically'
 
 * Examples
-- test cases for mvar
+- more mvar examples
+- pi examples
 
 * Interaction
-- show source from message
-- message dragging is slow
+- fix outputter to re-bind src
+- show all sources from source or message
+- message dragging is slow, broken in Safari
+
+* Text
+- eventually vs. fork --- change it to run()?
+- mvar vs. queue
+
+var fn = function(){return 1}.eventually();
+output(fn.join()); // calls it immediately
+
+// add error handling?
+Function.fork = function() {
+  var thread = setTimeout(fn, ms);
+  return {
+    cancel: function() {thread&&clearTimeout(thread); thread=null},
+    join: function() {thread&&clearTimeout(thread); thread=null;return fn();fn=null},
+  }
+}
