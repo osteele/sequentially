@@ -12,9 +12,6 @@
 - more mvar examples
 - pi examples
 
-* Interaction
-- show all sources from source or message
-
 * Text
 - eventually vs. fork --- change it to run()?
 - mvar vs. queue

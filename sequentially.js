@@ -3,7 +3,7 @@
  * Copyright: Copyright 2007 by Oliver Steele.  All rights reserved.
  * License: MIT License
  * Homepage: http://osteele.com/javascripts/sequentially
- * Version: 1.0
+ * Version: 1.0preview2
  */
 
 

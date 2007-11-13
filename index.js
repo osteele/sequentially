@@ -29,24 +29,27 @@ function initialize() {
 }
 
 function formatExamples() {
-    //window.output = gMessageWindow.output.bind(mw);
-    var e = $('examples');
+    var e = $('examples'),
+        mw = gMessageWindow;
     e.innerHTML = e.innerHTML.replace(/(<\/div>)((?:.+?\n)+)/g, '$1<div class="runnable">$2</div>');
     $$('#examples .runnable').each(function(item) {
-        item.observe('click', run);
+        item.observe('mouseover', mw.highlightMessagesFrom.bind(mw, item));
+        item.observe('mouseout', mw.highlightMessagesFrom.bind(mw, null));
+        item.observe('click', run.bind(null, true));
         run();
-        function run() {
-            function o() {
-                gMessageWindow.sourceElement = item;
-                gMessageWindow.output.apply(gMessageWindow, arguments);
+        function run(highlight) {
+            function output() {
+                mw.sourceElement = item;
+                mw.output.apply(mw, arguments);
             }
             try {
-                with ({output:o,
-                       outputter:function(msg){return o.bind(null, msg)}})
+                with ({output:output,
+                       outputter:function(msg){return output.bind(null, msg)}})
                     eval(item.innerHTML);
             } catch (e) {
                 output(['<span class="error">', e, '</span>'].join(''));
             }
+            highlight && mw.highlightMessagesFrom(item);
         }
     });
 }
@@ -147,7 +150,7 @@ MessageWindow.prototype = {
             elt.onmouseover = elt.onclick = function() {
                 var id = elt.id.replace(/^_s_/, ''),
                     src = $(id);
-                self.highlight(id);
+                self.highlightMessagesFrom(id);
                 src.addClassName('selected');
                 src.scrollTo();
             }
@@ -157,13 +160,14 @@ MessageWindow.prototype = {
             }
         });
     },
-        
-        highlight: function(id) {
-            var src = $(id);
-            src.addClassName('selected');
-            $$('#examples .selected').invoke('removeClassName', 'selected');
+
+    highlightMessagesFrom: function(src) {
+        $$('#messages .selected').invoke('removeClassName', 'selected');
+        if (src) {
+            var id = $(src).requireId();
             $$('#messages .src-for-' + id).invoke('addClassName', 'selected');
         }
+    }
 }
 
 
