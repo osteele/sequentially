@@ -37,7 +37,7 @@ function formatExamples() {
         run();
         function run() {
             function o() {
-                gMessageWindow.output.src = item;
+                gMessageWindow.sourceElement = item;
                 gMessageWindow.output.apply(gMessageWindow, arguments);
             }
             try {
@@ -95,12 +95,11 @@ function MessageWindow() {
     this.initialize();
 }
 
-MessageWindow.nextId = 0;
-
 MessageWindow.prototype = {
     initialize: function() {
         this.bindEvents();
         this.startClock();
+        this.messages = [];
     },
 
     bindEvents: function() {
@@ -123,13 +122,11 @@ MessageWindow.prototype = {
 
     output: function() {
         var msg = arguments.length ? Array.prototype.join.call(arguments, ' ') : '[no arguments]',
-            lines = this.lines = this.lines || [],
-            src = arguments.callee.src;
+            lines = this.messages,
+            src = this.sourceElement;
         if (src) {
-            arguments.callee.src = null;
-            var id = src.id;
-            if (!id)
-                id = src.id = '_o_' + ++MessageWindow.nextId;
+            this.sourceElement = null;
+            var id = $(src).requireId();
             msg = ['<span class="src" id="_s_', id, '">', msg, '</span>'].join('');
         }
         var line = [
@@ -147,23 +144,33 @@ MessageWindow.prototype = {
         $$('#output .src').each(function(elt) {
             elt.onmouseover = elt.onclick = function() {
                 var src = $(elt.id.replace(/^_s_/, ''));
-                $$('#examples .selected').each(function(elt) {
-                    Element.removeClassName(elt, 'selected');
-                });
-                Element.addClassName(src, 'selected');
-                Element.scrollTo(src);
+                $$('#examples .selected').invoke('removeClassName', 'selected');
+                src.addClassName('selected');
+                src.scrollTo();
             }
             elt.onmouseout = function() {
-                $$('#examples .selected').each(function(elt) {
-                    Element.removeClassName(elt, 'selected');
-                });
-                $$('#messages .selected').each(function(elt) {
-                    Element.removeClassName(elt, 'selected');
-                });
+                $$('#examples .selected, #messages .selected').invoke('removeClassName',
+                                                                      'selected');
             }
         });
     }
 }
+
+
+/*
+ * Utilities
+ */
+
+Element.nextId = 0;
+
+Element.addMethods({
+    requireId: function(e) {
+        var id = e.id;
+        if (!id)
+            id = e.id = '_o_' + ++Element.nextId;
+        return id;
+    }
+});
 
 
 /*
