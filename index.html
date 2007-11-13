@@ -33,12 +33,12 @@
       #messages {position:fixed; right:5px; bottom:5px; border:1px solid transparent}
       #messages {background:white;border:1px solid gray;}
       #messages.left {left:5px; right:inherit}
-      #messages #l, #messages #r {position:absolute; top:1px; cursor:pointer; color:gray; font-size:large; border:1px solid white; padding-left:2px; padding-right:2px; text-decoration:none;}
-      #messages #l {display:block; left:3px}
-      #messages #r {display:none; right:3px}
-      #messages #l:hover, #messages #r:hover {color:green; background:#8f8; border:1px solid green}
-      #messages.left #l {display:none}
-      #messages.left #r {display:block}
+      #messages .left, #messages .right {position:absolute; top:1px; cursor:pointer; color:gray; font-size:large; border:1px solid white; padding-left:2px; padding-right:2px; text-decoration:none;}
+      #messages .left {display:block; left:3px}
+      #messages .right {display:none; right:3px}
+      #messages .left:hover, #messages .right:hover {color:green; background:#8f8; border:1px solid green}
+      #messages.left .left {display:none}
+      #messages.left .right {display:block}
       #messages td {vertical-align:top}
       #messages th {padding-right:20px}
       #messages td div {padding-right:20px}
@@ -56,7 +56,7 @@
       .timestamp {font-variant:small-caps; font-size:small; color:gray}
 
       .runnable, #messages,
-      #messages #l:hover, #messages #r:hover 
+      #messages .left:hover, #messages .right:hover
       {-moz-border-radius:5px; -webkit-border-radius:5px}
     </style>
   </head>
@@ -94,8 +94,8 @@
     </div>
 
     <div id="messages">
-      <a href="#" id="l" title="Move this panel left">&laquo;</a>
-      <a href="#" id="r" title="Move this panel left">&raquo;</a>
+      <a href="#" class="left" title="Move this panel to the left side of the window.">&laquo;</a>
+      <a href="#" class="right" title="Move this panel to the right side of the window.">&raquo;</a>
       <table>
         <tr><th>Recent Messages (<span id="clock" class="timestamp"></span>)</th></tr>
         <tr><td>

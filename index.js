@@ -11,29 +11,17 @@ function initialize() {
     $('noscript').innerHTML = $('noscript').innerHTML.replace(
             /<span.*?<\/span>/,
         'If this message remains on the screen,');
-    new OSDoc.Examples().load('examples.js', {
+    new OSDoc.ExampleViewer().load('examples.js', {
         onSuccess: formatExamples,
         target: 'examples'});
-    new OSDoc.APIDoc().load('sequentially.js', {
+    new OSDoc.APIViewer().load('sequentially.js', {
         onSuccess: noteCompletion.saturate('docs'),
         target: 'docs'});
     initializeHeaderToggle();
     initializeTestLinks();
-    
-    Event.observe('l', 'click', function() {
-        Element.addClassName('messages', 'left');
-    });
-    Event.observe('r', 'click', function() {
-        Element.removeClassName('messages', 'left');
-    });
-    
-    var clockDiv = $('clock');
-    ticker();
-    function ticker() {
-        clockDiv.innerHTML = new Date().toLocaleTimeString();
-        setTimeout(ticker, 1000 - new Date().getMilliseconds());
-    }
-    
+    var mw = new MessageWindow();
+    window.output = mw.output.bind(mw);
+
     function formatExamples() {
         noteCompletion('examples');
         var e = $('examples');
@@ -94,49 +82,84 @@ function noteCompletion(flag) {
     }
 }
 
-var genid = 0;
-function output() {
-    var msg = arguments.length ? Array.prototype.join.call(arguments, ' ') : '[no arguments]',
-        lines = arguments.callee.lines = arguments.callee.lines || [],
-        src = arguments.callee.src;
-    if (src) {
-        arguments.callee.src = null;
-        var id = src.id;
-        if (!id)
-            id = src.id = '_o_' + ++genid;
-        msg = ['<span class="src" id="_s_', id, '">', msg, '</span>'].join('');
-    }
-    var line = [
-        '<span class="timestamp">',
-        new Date().toLocaleTimeString(),
-        ' </span>',
-        msg
-    ].join('');
-    lines.unshift(line);
-    lines.splice(20,lines.length);
-    $('output').innerHTML = lines.map(function(line, ix) {
-        var opacity = 1 - .95*ix/lines.length;
-        return ['<div style="opacity:', opacity,'">', line, '</div>'].join('');
-    }).join('');
-    $$('#output .src').each(function(elt) {
-        elt.onmouseover = elt.onclick = function() {
-            var src = $(elt.id.replace(/^_s_/, ''));
-            $$('#examples .selected').each(function(elt) {
-                Element.removeClassName(elt, 'selected');
-            });
-            Element.addClassName(src, 'selected');
-            Element.scrollTo(src);
-        }
-        elt.onmouseout = function() {
-            $$('#examples .selected').each(function(elt) {
-                Element.removeClassName(elt, 'selected');
-            });
-            $$('#messages .selected').each(function(elt) {
-                Element.removeClassName(elt, 'selected');
-            });
-        }
-    });
+
+/*
+ * Message Window
+ */
+
+function MessageWindow() {
+    this.initialize();
 }
+
+MessageWindow.prototype = {
+    initialize: function() {
+        this.bindEvents();
+        this.startClock();
+    },
+
+    bindEvents: function() {
+        $$('#messages .left, #messages .right').map(function(e) {
+            e.observe('click', function() {
+                console.info(1, e);
+                $('messages').removeClassName('left').removeClassName('right').addClassName(e.className);
+            });
+        });
+    },
+    
+    startClock: function() {
+        var clockDiv = $('clock');
+        ticker();
+        function ticker() {
+            clockDiv.innerHTML = new Date().toLocaleTimeString();
+            setTimeout(ticker, 1000 - new Date().getMilliseconds());
+        }
+    },
+    
+    output: function() {
+        var msg = arguments.length ? Array.prototype.join.call(arguments, ' ') : '[no arguments]',
+            lines = arguments.callee.lines = arguments.callee.lines || [],
+            src = arguments.callee.src;
+        if (src) {
+            arguments.callee.src = null;
+            var id = src.id;
+            if (!id)
+                id = src.id = '_o_' + ++genid;
+            msg = ['<span class="src" id="_s_', id, '">', msg, '</span>'].join('');
+        }
+        var line = [
+            '<span class="timestamp">',
+            new Date().toLocaleTimeString(),
+            ' </span>',
+            msg
+        ].join('');
+        lines.unshift(line);
+        lines.splice(20,lines.length);
+        $('output').innerHTML = lines.map(function(line, ix) {
+            var opacity = 1 - .95*ix/lines.length;
+            return ['<div style="opacity:', opacity,'">', line, '</div>'].join('');
+        }).join('');
+        $$('#output .src').each(function(elt) {
+            elt.onmouseover = elt.onclick = function() {
+                var src = $(elt.id.replace(/^_s_/, ''));
+                $$('#examples .selected').each(function(elt) {
+                    Element.removeClassName(elt, 'selected');
+                });
+                Element.addClassName(src, 'selected');
+                Element.scrollTo(src);
+            }
+            elt.onmouseout = function() {
+                $$('#examples .selected').each(function(elt) {
+                    Element.removeClassName(elt, 'selected');
+                });
+                $$('#messages .selected').each(function(elt) {
+                    Element.removeClassName(elt, 'selected');
+                });
+            }
+        });
+    }
+}
+
+var genid = 0;
 
 
 /*
