@@ -82,7 +82,7 @@ var fn = outputter('maxtimes').maxtimes(2);
 fn(); fn(); fn(); fn();
 
 // `output` will be called at most once/second,
-// no matter how fast fn is called
+// no matter how fast `fn` is called.
 var fn = outputter('throttled').
   incrementing().
   throttled(1000);
@@ -91,8 +91,8 @@ fn(); fn(); fn(); fn();
 // Same as above, but with incremental backoff
 var fn = outputter('throttled w/backoff').
   incrementing().
-  throttled(1000, {backoff:true});
-fn(); fn(); fn();
+  throttled(250, {backoff:true});
+fn(); fn(); fn(); fn();
 
 
 // ^ MVar

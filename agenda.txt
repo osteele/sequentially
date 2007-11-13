@@ -15,17 +15,3 @@
 * Text
 - eventually vs. fork --- change it to run()?
 - mvar vs. queue
-
-var fn = function(){return 1}.eventually();
-output(fn.join()); // calls it immediately
-
-// add error handling?
-Function.fork = function() {
-  var thread = setTimeout(fn, ms);
-  return {
-    cancel: function() {thread&&clearTimeout(thread); thread=null},
-    join: function() {thread&&clearTimeout(thread); thread=null;return fn();fn=null},
-  }
-}
-
-pi = Pi.Name();

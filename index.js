@@ -17,6 +17,7 @@ function initialize() {
         onSuccess: function() {
             noteCompletion('examples');
             formatExamples();
+            bindExamples();
         },
         target: 'examples'});
     new OSDoc.APIViewer().load('sequentially.js', {
@@ -29,9 +30,14 @@ function initialize() {
 }
 
 function formatExamples() {
+    var e = $('examples');
+    e.innerHTML =
+        e.innerHTML.replace(/(<\/div>)((?:.+?\n)+)/g, '$1<div class="runnable">$2</div>');
+}
+
+function bindExamples() {
     var e = $('examples'),
         mw = gMessageWindow;
-    e.innerHTML = e.innerHTML.replace(/(<\/div>)((?:.+?\n)+)/g, '$1<div class="runnable">$2</div>');
     $$('#examples .runnable').each(function(item) {
         item.observe('mouseover', mw.highlightMessagesFrom.bind(mw, item));
         item.observe('mouseout', mw.highlightMessagesFrom.bind(mw, null));
@@ -129,8 +135,9 @@ MessageWindow.prototype = {
         if (src) {
             this.sourceElement = null;
             var id = $(src).requireId();
-            msg = ['<span class="src src-for-', id,'" id="_s_',
-                   id, '">', msg, '</span>'].join('');
+            msg = ['<a class="src src-for-', id,'" id="_s_',
+                   id, '" title="Click to scroll to the source">',
+                   msg, '</a>'].join('');
         }
         var line = [
             '<span class="timestamp">',
@@ -144,16 +151,21 @@ MessageWindow.prototype = {
             var opacity = 1 - .95*ix/messages.length;
             return ['<div style="opacity:', opacity,'">', line, '</div>'].join('');
         }).join('');
-        var self = this;
         if (src && src == this.highlighting)
             this.highlightMessagesFrom(src);
+        // re-bind the events
+        var self = this;
         $$('#output .src').each(function(elt) {
-            elt.onmouseover = elt.onclick = function() {
+            elt.onclick = function() {
+                var id = elt.id.replace(/^_s_/, ''),
+                    src = $(id);
+                src.scrollTo();
+            }
+            elt.onmouseover = function() {
                 var id = elt.id.replace(/^_s_/, ''),
                     src = $(id);
                 self.highlightMessagesFrom(id);
                 src.addClassName('selected');
-                src.scrollTo();
             }
             elt.onmouseout = function() {
                 $$('#examples .selected, #messages .selected').invoke('removeClassName',
