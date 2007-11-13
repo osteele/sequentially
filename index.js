@@ -35,9 +35,9 @@ function formatExamples() {
     $$('#examples .runnable').each(function(item) {
         item.observe('mouseover', mw.highlightMessagesFrom.bind(mw, item));
         item.observe('mouseout', mw.highlightMessagesFrom.bind(mw, null));
-        item.observe('click', run.bind(null, true));
+        item.observe('click', run);
         run();
-        function run(highlight) {
+        function run() {
             function output() {
                 mw.sourceElement = item;
                 mw.output.apply(mw, arguments);
@@ -49,7 +49,6 @@ function formatExamples() {
             } catch (e) {
                 output(['<span class="error">', e, '</span>'].join(''));
             }
-            highlight && mw.highlightMessagesFrom(item);
         }
     });
 }
@@ -146,6 +145,8 @@ MessageWindow.prototype = {
             return ['<div style="opacity:', opacity,'">', line, '</div>'].join('');
         }).join('');
         var self = this;
+        if (src && src == this.highlighting)
+            this.highlightMessagesFrom(src);
         $$('#output .src').each(function(elt) {
             elt.onmouseover = elt.onclick = function() {
                 var id = elt.id.replace(/^_s_/, ''),
@@ -157,11 +158,13 @@ MessageWindow.prototype = {
             elt.onmouseout = function() {
                 $$('#examples .selected, #messages .selected').invoke('removeClassName',
                                                                       'selected');
+                this.highlighting = false;
             }
         });
     },
 
     highlightMessagesFrom: function(src) {
+        this.highlighting = src;
         $$('#messages .selected').invoke('removeClassName', 'selected');
         if (src) {
             var id = $(src).requireId();
