@@ -13,7 +13,6 @@
 - pi examples
 
 * Interaction
-- fix message arrows on FF
 - show all sources from source or message
 
 * Text
