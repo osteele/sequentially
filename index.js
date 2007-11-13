@@ -7,44 +7,48 @@
  * Modified: 2007-07-21
  */
 
+var gMessageWindow;
+
 function initialize() {
     $('noscript').innerHTML = $('noscript').innerHTML.replace(
             /<span.*?<\/span>/,
         'If this message remains on the screen,');
     new OSDoc.ExampleViewer().load('examples.js', {
-        onSuccess: formatExamples,
+        onSuccess: function() {
+            noteCompletion('examples');
+            formatExamples();
+        },
         target: 'examples'});
     new OSDoc.APIViewer().load('sequentially.js', {
         onSuccess: noteCompletion.saturate('docs'),
         target: 'docs'});
     initializeHeaderToggle();
     initializeTestLinks();
-    var mw = new MessageWindow();
-    window.output = mw.output.bind(mw);
 
-    function formatExamples() {
-        noteCompletion('examples');
-        var e = $('examples');
-        e.innerHTML = e.innerHTML.replace(/(<\/div>)((?:.+?\n)+)/g, '$1<div class="runnable">$2</div>');
-        $$('#examples .runnable').each(function(item) {
-            Event.observe(item, 'click', fn);
-            fn();
-            function fn() {
-                function o() {
-                    //console.info(item);
-                    output.src = item;
-                    output.apply(null, arguments);
-                }
-                try {
-                    with ({output:o,
-                           outputter:function(msg){return o.bind(null, msg)}})
-                        eval(item.innerHTML);
-                } catch (e) {
-                    output(['<span class="error">', e, '</span>'].join(''));
-                }
+    gMessageWindow = new MessageWindow();
+}
+
+function formatExamples() {
+    //window.output = gMessageWindow.output.bind(mw);
+    var e = $('examples');
+    e.innerHTML = e.innerHTML.replace(/(<\/div>)((?:.+?\n)+)/g, '$1<div class="runnable">$2</div>');
+    $$('#examples .runnable').each(function(item) {
+        item.observe('click', run);
+        run();
+        function run() {
+            function o() {
+                gMessageWindow.output.src = item;
+                gMessageWindow.output.apply(gMessageWindow, arguments);
             }
-        });
-    }
+            try {
+                with ({output:o,
+                       outputter:function(msg){return o.bind(null, msg)}})
+                    eval(item.innerHTML);
+            } catch (e) {
+                output(['<span class="error">', e, '</span>'].join(''));
+            }
+        }
+    });
 }
 
 function initializeHeaderToggle() {
@@ -91,6 +95,8 @@ function MessageWindow() {
     this.initialize();
 }
 
+MessageWindow.nextId = 0;
+
 MessageWindow.prototype = {
     initialize: function() {
         this.bindEvents();
@@ -105,7 +111,7 @@ MessageWindow.prototype = {
             });
         });
     },
-    
+
     startClock: function() {
         var clockDiv = $('clock');
         ticker();
@@ -114,16 +120,16 @@ MessageWindow.prototype = {
             setTimeout(ticker, 1000 - new Date().getMilliseconds());
         }
     },
-    
+
     output: function() {
         var msg = arguments.length ? Array.prototype.join.call(arguments, ' ') : '[no arguments]',
-            lines = arguments.callee.lines = arguments.callee.lines || [],
+            lines = this.lines = this.lines || [],
             src = arguments.callee.src;
         if (src) {
             arguments.callee.src = null;
             var id = src.id;
             if (!id)
-                id = src.id = '_o_' + ++genid;
+                id = src.id = '_o_' + ++MessageWindow.nextId;
             msg = ['<span class="src" id="_s_', id, '">', msg, '</span>'].join('');
         }
         var line = [
@@ -158,8 +164,6 @@ MessageWindow.prototype = {
         });
     }
 }
-
-var genid = 0;
 
 
 /*
