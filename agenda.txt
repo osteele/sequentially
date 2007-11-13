@@ -13,6 +13,7 @@
 - pi examples
 
 * Interaction
+- fix message arrows on FF
 - show all sources from source or message
 
 * Text
@@ -30,3 +31,5 @@ Function.fork = function() {
     join: function() {thread&&clearTimeout(thread); thread=null;return fn();fn=null},
   }
 }
+
+pi = Pi.Name();

@@ -10,3 +10,18 @@ I decided that Erlang had the right idea.
 I never really got used to threads.  The experience of programming with multiple threads was frustrating for me.  The parts of the program that worked with synchronization were never integrated with the parts that weren't, and I continually had to move the firewall between the synchronized and thread-blind portion of the program.  (Sort of like the const/mutable firewall in C, or the Monad/expression firewall in Haskell.)
 
 I find it much more intuitive to think in terms of these little workers and waiters and watchers and listeners that you spin off.  It's the daemon idea from AI. 
+
+
+I use this in a style I call "adverbial programming".  Someday I'll post an entry about the analogy between computer languages and natural languages; for now, simply note that methods such as "eventually" and "repeatedly" modify a functions (verbs) to produce new functions with related meanings.  This is in contrast to object-oriented programming, which is all about noun phrases, and functional programming, which is largely about verbs.  (Closures, which bridge the gap between functional and OO, are gerunds.)
+
+In categorial grammar, an adverb is a function that modifies a verb into another adverb[1].  Functions are the verbs of programming languages (and objects are the nouns); an adverb is a function that modifies a function by returning an output that is based on the input.  (In math, these higher-order functions are called functionals.)
+
+Object-oriented programming is all about nouns.  You can see this in some design patterns; the decorator pattern implements adjectives (elements that wrap a noun to produce a new noun).  The collection pattern implements conjunctions: distinct objects are coordinated into a single one.
+
+Nouns are object; functions are verbs; statements are sentences.  A statement is evaluated for its effect on the mutable state of the program and the world; likewise, a natural-language sentence has an effect on the discourse model.  Some statements (IO statements, and other statements that manipulate external resources) have an effect on the world too; in natural language, these kinds of sentences, which reach outside of the discourse model, are performatives.
+
+Closures are gerunds.  English has distinct syntactic positions for 
+
+Function-level programming isn't really at the level of language use.  Using a functional programming style is similar to theorizing about natural language: curried (partially saturated) functions are the bread and butter of Montague and categorial grammars.
+
+fn1. In the interest of brevity, I'm going to distinguish between verbs and verb phrases, and between nouns and noun phrases.  Pretty much everything that I call a noun here is really a noun phrase, or at least an N bar.  Likewise, I'm not going to specify verbal advebs here. English has three different things called adverbs; I'm only talking about one of them here.
