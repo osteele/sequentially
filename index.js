@@ -122,12 +122,13 @@ MessageWindow.prototype = {
 
     output: function() {
         var msg = arguments.length ? Array.prototype.join.call(arguments, ' ') : '[no arguments]',
-            lines = this.messages,
+            messages = this.messages,
             src = this.sourceElement;
         if (src) {
             this.sourceElement = null;
             var id = $(src).requireId();
-            msg = ['<span class="src" id="_s_', id, '">', msg, '</span>'].join('');
+            msg = ['<span class="src src-for-', id,'" id="_s_',
+                   id, '">', msg, '</span>'].join('');
         }
         var line = [
             '<span class="timestamp">',
@@ -135,16 +136,18 @@ MessageWindow.prototype = {
             ' </span>',
             msg
         ].join('');
-        lines.unshift(line);
-        lines.splice(20,lines.length);
-        $('output').innerHTML = lines.map(function(line, ix) {
-            var opacity = 1 - .95*ix/lines.length;
+        messages.unshift(line);
+        messages.splice(20, messages.length);
+        $('output').innerHTML = messages.map(function(line, ix) {
+            var opacity = 1 - .95*ix/messages.length;
             return ['<div style="opacity:', opacity,'">', line, '</div>'].join('');
         }).join('');
+        var self = this;
         $$('#output .src').each(function(elt) {
             elt.onmouseover = elt.onclick = function() {
-                var src = $(elt.id.replace(/^_s_/, ''));
-                $$('#examples .selected').invoke('removeClassName', 'selected');
+                var id = elt.id.replace(/^_s_/, ''),
+                    src = $(id);
+                self.highlight(id);
                 src.addClassName('selected');
                 src.scrollTo();
             }
@@ -153,7 +156,14 @@ MessageWindow.prototype = {
                                                                       'selected');
             }
         });
-    }
+    },
+        
+        highlight: function(id) {
+            var src = $(id);
+            src.addClassName('selected');
+            $$('#examples .selected').invoke('removeClassName', 'selected');
+            $$('#messages .src-for-' + id).invoke('addClassName', 'selected');
+        }
 }
 
 
