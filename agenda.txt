@@ -2,6 +2,13 @@
 - promises and futures
 - until, while, combinators a{n}0 ab*
 - eventually vs. fork
+- after, before, until, consecutively, following, consequently, continuously
+
+maxtimes -> only; +once
+
+
+clauses with temporal links
+contingent requests
 
 * Naming
 - rename -> 'frequently'?

@@ -1,11 +1,4 @@
-/*
- * Author: Oliver Steele
- * Copyright: Copyright 2007 by Oliver Steele.  All rights reserved.
- * License: MIT License
- * Homepage: http://osteele.com/javascripts/functional
- * Created: 2007-07-11
- * Modified: 2007-07-21
- */
+/* Copyright 2007 by Oliver Steele.  Available under the MIT License. */
 
 var gMessageWindow;
 
