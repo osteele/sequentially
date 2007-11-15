@@ -89,7 +89,7 @@ Function.prototype.periodically = function(ms) {
 /** Call the function repeatedly until it returns nil.  If `count` is supplied,
  * only run this many times. */
 Function.prototype.repeatedly = function(count) {
-    // !(undefined-- < 0) is true
+    // Write the first test this way because !(undefined-- < 0) is true
     while (!(--count < 0) && this.apply(null, arguments) !== Sequentially.nil)
         ;
     return Sequentially.nil;

@@ -2,38 +2,45 @@
 
 // ^ One-liners
 
-// Here's a sample of what's in this library.
-// (Click on a block to execute it.  Click on a message in the message
-// window to see where it came from.)
+// Here's a sample of what's in this library.  (Click on a blue block
+// below to execute it.  Click on a message in the message window to
+// see where it came from.)
 
-// This defines a function that runs only once per second, now matter
-// how often you call it.  (`outputter` returns a function that prints
-// 'infrequently' to the message panel.)
+// `outputter` returns a function that prints a message to the message
+// panel.  It's not part of this library and it doesn't use it, but
+// it's useful for illustrating it.
+var fn = outputter('message');
+fn(); fn();
+
+// Defines a function that calls the outputter only once per second,
+// now matter how frequently you call `fn`.
 var fn = outputter('infrequently').infrequently();
 fn(); fn(); fn(); fn();
 
-// Here's one that runs only twice (ever), no matter how *many times*
-// you call it.
+// Defines a function that only calls the outputter twice, no matter
+// how many times you call `fn`.
 var fn = outputter('only').only(2);
 fn(); fn(); fn(); fn(); fn();
 
-// This one runs once five times in a row, right now.
-var fn = outputter('repeatedly').only(5).repeatedly();
+// This calls the outputter five times in a row, right now.
+outputter('repeatedly').only(5).repeatedly();
 
-// This one runs once per second, for a total of five times.
-var fn = outputter('periodically').only(5).periodically();
+// This calls it once per second, for a total of five times.
+outputter('periodically').only(5).periodically();
 
-// Apply a function to each element of an array, once per second.
+// Apply the outputter sequentially to each element of the array, once
+// per second.
 outputter('seq').sequentially(['a','b','c']).periodically();
 
 
 // ^ Deferred Execution (Temporal Adverbs)
 
-// wait 1s, and then call `output`
-outputter('eventually').eventually(1000);
-
-// wait 1s, and then call `output` with no arguments
+// wait one second, and then call `output` with no arguments
 output.eventually(1000);
+
+// wait one second, and then call the outputter (the function returned
+// by `outputter(...)`).
+outputter('eventually').eventually(1000);
 
 // call `output` at a specific date and time (here, one second in the
 // future)
@@ -50,48 +57,62 @@ outputter('repeatedly').only(5).repeatedly();
 // same as above
 outputter('repeatedly').repeatedly(5);
 
-// run five times at 1/2s intervals
+// run five times at 0.5s intervals
 outputter('repeatedly').only(5).periodically(500);
 
-// run until `stop` is set to true
+// run until `stop` is set true
 stop = false;
 (function() {
     output('periodically');
     return stop && Sequentially.nil;
 }).periodically(1000);
 
-// evaluate this to turn off the loop above
+// evaluate this to stop the loop above
 stop = true;
 
 
 // ^ Sequential Execution
 
-// Sequentially applies the argument function to the elements of this array.
+// Sequentially returns a function that sequentially applies this
+// function to the elements of the argument array each time it is
+// called.
+var fn = outputter('Function#sequentially')
+  .sequentially(['[0]', '[1]', '[2]']);
+fn(); fn(); fn();
+
+// We could also write it as a method on the array.  This looks
+// more like `Array#forEach` and friends.
+var fn = ['[0]', '[1]', '[2]'].sequentially(
+    outputter('Array#sequentially'));
+fn(); fn(); fn();
+
 // This is equivalent to `Array#forEach`.
 ['[0]', '[1]', '[2]'].sequentially(
     outputter('Array#sequentially.repeatedly')).repeatedly();
 
 // The same as above, except the function is called only once per second.
-// (We could do the same with `.infrequently().repeatedly()`.)
+// (We could do the same with `fn.infrequently().repeatedly()`.)
 ['[0]', '[1]', '[2]'].sequentially(
     outputter('Array#sequentially.periodically')).periodically();
 
-// A new function that invokes each of its arguments in turn.
+// Create a function that invokes each of its arguments in turn.
 // We'll call it a number of times in a row to invoke them
 // all immediately, but this could also be used as a target to
-// `periodically`.
-Function.sequentially(
+// `repeatedly` or `periodically`, possibly with an intermediate
+// `infrequently` to throttle its.
+var fn = Function.sequentially(
     outputter('Function.sequentially[0]'),
     outputter('Function.sequentially[1]'),
     outputter('Function.sequentially[2]')
-).repeatedly();
+)
+fn(); fn(); fn();
 
 
 // ^ Throttling
 
-// Make a new function that only `ouputter` the old one the first `n`
-// times it's called.  After this, it does nothing.  Note that there
-// are four function calls, but it only prints the message twice.
+// `fn` only invokes the outputter the first `n` times it's called.
+// After this, it does nothing.  Note that there are four function
+// calls, but it only prints the message twice.
 var fn = outputter('only').only(2);
 fn(); fn(); fn(); fn();
 

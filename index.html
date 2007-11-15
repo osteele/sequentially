@@ -35,14 +35,13 @@
         like periodically ask an application server to recreate a
         resource if it's not available from an asset server, but
         throttle the requests and eventually back off and then give up
-        if it looks like the application server is too busy or
-        down.</p>
+        if it looks like the server is too busy or down.</p>
         
-        <p>Sequentially also contains implementations of
-        Haskell <dfn><a
+        <p>Sequentially also contains a partial port Haskell's <dfn><a
         href="http://www.haskell.org/ghc/docs/latest/html/libraries/base-3.0.0.0/Control-Concurrent-MVar.html">MVars</a></dfn>,
         that can each be used to coordinate data flow among
         asynchronously-scheduled functions.</p>
+        
         <p><em>Functionally</em>, Sequentially combines data flow
         programming with simple process scheduling.
 
