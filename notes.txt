@@ -1,3 +1,11 @@
+// Finally, apply each element of an array, starting out once per
+// second, with incremental backoff.  (Not quite a one-liner with this
+// page layout, but it could be :-)
+outputter('sequentially').
+  sequentially('a few words'.split(' ')).
+  periodically(1000, {backoff:true});
+
+
 // The same as above. except the function is called only once per second.
 //['[0]', '[1]', '[2]'].sequentially(
 //    outputter('Array#sequentially.periodically')).infrequently().repeatedly();

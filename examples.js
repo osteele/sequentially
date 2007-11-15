@@ -2,32 +2,31 @@
 
 // ^ One-liners
 
-// Here's a sampler of what's in this library.  Here's a function that runs
-// only once per second, now matter how frequently you call it.
+// Here's a sample of what's in this library.
 // (Click on a block to execute it.  Click on a message in the message
 // window to see where it came from.)
+
+// This defines a function that runs only once per second, now matter
+// how often you call it.
 var fn = outputter('infrequently').infrequently();
 fn(); fn(); fn(); fn();
 
-// Here's one that runs only twice, no matter how *often* you call it.
+// Here's one that runs only twice (ever), no matter how *many times*
+// you call it.
 var fn = outputter('only').only(2);
 fn(); fn(); fn(); fn(); fn();
+
+// This one runs once five times in a row, right now.
+var fn = outputter('repeatedly').only(5).repeatedly();
 
 // This one runs once per second, for a total of five times.
 var fn = outputter('periodically').only(5).periodically();
 
 // Apply a function to each element of an array, once per second.
-outputter('sequentially').sequentially(['a','b','c']).periodically();
-
-// Finally, apply each element of an array, starting out twice per
-// second, with incremental backoff.  (Not quite a one-liner, but one
-// expression and fewer than 100 characters.)
-outputter('sequentially').
-  sequentially('a few words'.split(' ')).
-  periodically(500, {backoff:true});
+outputter('seq').sequentially(['a','b','c']).periodically();
 
 
-// ^ Deferred Execution
+// ^ Deferred Execution (Temporal Adverbs)
 
 // wait 1s, and then call `output`
 outputter('eventually').eventually(1000);
@@ -42,7 +41,7 @@ when.setSeconds(when.getSeconds()+1);
 outputter('at').at(when);
 
 
-// ^ Repeated Execution
+// ^ Repeated Execution (Frequency Adverbs)
 
 // run five times immediately
 outputter('repeatedly').only(5).repeatedly();
@@ -53,7 +52,7 @@ outputter('repeatedly').repeatedly(5);
 // run five times at 1/2s intervals
 outputter('repeatedly').only(5).periodically(500);
 
-// run until the `stop` is set to true
+// run until `stop` is set to true
 stop = false;
 (function() {
     output('periodically');
@@ -66,16 +65,20 @@ stop = true;
 
 // ^ Sequential Execution
 
-// Sequentially apply the argument function to the elements of this array.
+// Sequentially applies the argument function to the elements of this array.
 // This is equivalent to `Array#forEach`.
 ['[0]', '[1]', '[2]'].sequentially(
     outputter('Array#sequentially.repeatedly')).repeatedly();
 
-// The same as above. except the function is called only once per second.
+// The same as above, except the function is called only once per second.
+// (We could do the same with `.infrequently().repeatedly()`.)
 ['[0]', '[1]', '[2]'].sequentially(
     outputter('Array#sequentially.periodically')).periodically();
 
-// A new function that calls each function in turn.
+// A new function that invokes each of its arguments in turn.
+// We'll call it a number of times in a row to invoke them
+// all immediately, but this could also be used as a target to
+// `periodically`.
 Function.sequentially(
     outputter('Function.sequentially[0]'),
     outputter('Function.sequentially[1]'),
@@ -85,14 +88,14 @@ Function.sequentially(
 
 // ^ Throttling
 
-// Make a new functions that only calls the old one the first `n` times
-// it's called.  After this, it does nothing.  Note that there are four
-// function calls, but it only prints the message twice.
+// Make a new function that only `ouputter` the old one the first `n`
+// times it's called.  After this, it does nothing.  Note that there
+// are four function calls, but it only prints the message twice.
 var fn = outputter('only').only(2);
 fn(); fn(); fn(); fn();
 
-// `output` will be called at most once/second,
-// no matter how fast `fn` is called.
+// `fn` calls `output` at most once per second, no matter
+// how fast `fn` is called.
 var fn = outputter('infrequently').infrequently(1000);
 fn(); fn(); fn(); fn();
 
@@ -138,13 +141,13 @@ mv.taker(outputter('mvar.taker 1'));
 mv.taker(outputter('mvar.taker 2'));
 
 
-// ^ Utilities
-
-// These are the utility functions that are used above.
+// ^ Tracing Functions
 
 // The JavaScript for this web page defines a couple of utility
-// functions that we use to trace what's going on.  `output` writes
-// the date and a message into the message area on this page.
+// functions that are used above to trace what's going on.
+
+// `output` writes the date and a message into the message area on
+// this page.
 output('message');
 
 // `outputter` creates a function that calls `output` with an extra string.
