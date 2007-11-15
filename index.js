@@ -101,7 +101,8 @@ var Examples = {
         clicked && $$('.instr').invoke('removeClassName', 'instr');
         var mw = gMessageWindow,
             counters = {},
-            output = function(name) {
+            text = item.innerHTML.replace(/&amp;/g, '&');
+        function output(name) {
                 var args = Array.slice(arguments, 0);
                 if (args.length == 1 && typeof name == 'string') {
                     var count = counters[name] || 0;
@@ -111,8 +112,13 @@ var Examples = {
                 mw.sourceElement = item;
                 mw.output.apply(mw, args);
             };
-        var outputter = function(msg){return output.bind(null, msg)},
-            text = item.innerHTML.replace(/&amp;/g, '&');
+        var outputter = function(){
+            var args = Array.slice(arguments, 0);
+            return function() {
+                output.apply(this, args.concat(Array.slice(arguments, 0)));
+            }
+            return output.bind.apply(output.bind, null, arguments);
+        };
         try {
             with ({output: output,
                    outputter: outputter})

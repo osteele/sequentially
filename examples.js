@@ -7,7 +7,8 @@
 // window to see where it came from.)
 
 // This defines a function that runs only once per second, now matter
-// how often you call it.
+// how often you call it.  (`outputter` returns a function that prints
+// 'infrequently' to the message panel.)
 var fn = outputter('infrequently').infrequently();
 fn(); fn(); fn(); fn();
 
@@ -38,7 +39,7 @@ output.eventually(1000);
 // future)
 var when = new Date();
 when.setSeconds(when.getSeconds()+1);
-outputter('at').at(when);
+outputter('at', when.toTimeString()).at(when);
 
 
 // ^ Repeated Execution (Frequency Adverbs)

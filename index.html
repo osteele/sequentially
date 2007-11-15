@@ -13,10 +13,12 @@
     <link rel="stylesheet" type="text/css" href="styles.css"/>
   </head>
   <body>
-    <h1>Sequentially<span class="subtitle">: Frequency Adverbs for JavaScript</span></h1>
+    <h1>Sequentially<span class="subtitle">: Adverbs for JavaScript (preview version)</span></h1>
     <div class="navbar">
       <input type="checkbox" id="header-toggle" value="on" checked="checked"/> header
+      <span style="display:none">
       | <a href="http://osteele.com/archives/2007/11/sequentially">announcement</a>
+      </span>
       | download:
       <a href="sequentially.min.js.gz">compressed (&lt;2K min gz)</a>
       | <a href="sequentially.js">source</a>
@@ -26,21 +28,38 @@
         <p><dfn>Sequentially</dfn> is a library of temporal and
         frequency adverbs for JavaScript.  It provides methods to
         queue a function for deferred or repeated execution, and to
-        control the rate or count at which a function can be
+        control the rate or total count at which a function can be
         called.</p>
+        
+        <p>I use this to write client-side programs that do things
+        like periodically ask an application server to recreate a
+        resource if it's not available from an asset server, but
+        throttle the requests and eventually back off and then give up
+        if it looks like the application server is too busy or
+        down.</p>
+        
         <p>Sequentially also contains implementations of
         Haskell <dfn><a
         href="http://www.haskell.org/ghc/docs/latest/html/libraries/base-3.0.0.0/Control-Concurrent-MVar.html">MVars</a></dfn>,
         that can each be used to coordinate data flow among
         asynchronously-scheduled functions.</p>
-        <p><em>Functionally</em>, Sequentially is like a blend of
-        streams and generators, with processes.
-        <em>Computationally</em>, it's similar to the <a
-        href="http://en.wikipedia.org/wiki/Pi-calculus">&pi;-calculus</a>.
-        <em>Stylistically</em>, it can be used in a <dfn>adverbial
-        programming</dfn>, a paradigm that complements procedural
-        (verbal), object-oriented (noun phrase), and functional
-        (gerundive) programming.</p>
+        <p><em>Functionally</em>, Sequentially combines data flow
+        programming with simple process scheduling.
+
+        <em>Stylistically</em>, Sequentially can be used in
+        <dfn>adverbial programming</dfn>, a paradigm that complements
+        procedural (verb-base), object-oriented (noun-based), and
+        functional (gerundive) programming.  <em>Theoretically</em>,
+        Sequentially uses closures to embed (some of) the <a
+        href="http://en.wikipedia.org/wiki/Pi-calculus">&pi;-calculus</a>
+        in JavaScript.  Alternatively, it's the CPS conversion of the
+        categorial dual of <a
+        href="http://en.wikipedia.org/wiki/Generator_%28computer_science%29">generators</a>.
+        Or maybe it's the Chu space dual of <a
+        href="../functional">Functional JavaScript</a>.  Or, it's
+        nothing more than a few combinators for frequency, iteration,
+        and time.</p>
+
         <p>This is a <em>preview release</em>.  It hasn't been thoroughly
         tested, and I plan to make some major changes to the API as I
         continue to experiment how best to use this in my own programs.</p>
