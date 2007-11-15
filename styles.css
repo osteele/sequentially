@@ -1,10 +1,11 @@
 body {padding:0pt 10pt 0 10pt; color:#222; background:#fff}
 h1 {text-align:center;margin-bottom:2pt}
-h1 div {display:inline; font-size:x-large; color:gray}
+h1 .subtitle {display:inline; font-size:x-large; color:gray}
 h2 .download {font-size: small}
 .navbar {font-size:medium; color:gray;text-align:center;margin-bottom:5pt}
 .navbar a {}
 p, pre {line-height:1.25em; margin-top:0}
+dfn {font-weight:bold; font-style:normal}
 a {color:#888}
 a:hover {color:blue}
 samp {color:blue}
@@ -39,6 +40,7 @@ table.docs {background:#f9f9f9}
 .runnable {color:blue;border:2px solid white}
 .runnable.selected {color:green; background:#dfd}
 .runnable:hover {cursor:pointer; background:#8f8; border:2px solid green}
+.instr {background:yellow}
 
 .timestamp {font-variant:small-caps; font-size:small; color:gray}
 

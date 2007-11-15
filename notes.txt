@@ -1,3 +1,8 @@
+// The same as above. except the function is called only once per second.
+//['[0]', '[1]', '[2]'].sequentially(
+//    outputter('Array#sequentially.periodically')).infrequently().repeatedly();
+
+
 incrementally -> repeatedly ?
 
 - eventually vs. fork --- change it to run()?
@@ -75,11 +80,10 @@ b) ever, hardly ever, never, rarely, scarcely ever, seldom
 
 cf. priority and frequency
 
-
- and <a
-        href="http://en.wikipedia.org/wiki/Pi-calculus">&pi;-calculus</a>
-        <dfn>named channels</dfn>
-
+Here's a function that
+// receives a different argument each time you call it.
+var fn = outputter('incrementally').incrementally();
+fn(); fn(); fn();
 
 function RemoteMVar(options) {
     var mvar = MVar();

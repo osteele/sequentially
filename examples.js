@@ -2,43 +2,32 @@
 
 // ^ One-liners
 
-// Here's a quick taste of what's below.  Here's a function that
-// receives a different argument each time you call it.
-var fn = outputter('incrementally').incrementally();
-fn(); fn(); fn();
-
-// Here's one that runs only twice, no matter how often you call it.
-var fn = outputter('only').incrementally().only(2);
-fn(); fn(); fn(); fn(); fn();
-
-// Here's one that runs only once per second, now matter how *fast*
-// you call it.
-var fn = outputter('infrequently').incrementally().infrequently();
+// Here's a sampler of what's in this library.  Here's a function that runs
+// only once per second, now matter how frequently you call it.
+// (Click on a block to execute it.  Click on a message in the message
+// window to see where it came from.)
+var fn = outputter('infrequently').infrequently();
 fn(); fn(); fn(); fn();
 
+// Here's one that runs only twice, no matter how *often* you call it.
+var fn = outputter('only').only(2);
+fn(); fn(); fn(); fn(); fn();
+
 // This one runs once per second, for a total of five times.
-var fn = outputter('periodically').incrementally().only(5).periodically();
+var fn = outputter('periodically').only(5).periodically();
 
-// Finally, here's a function that is applied to each element
-// of an array, once per second.
-outputter('mondo').sequentially(['a', 'b', 'c']).periodically();
+// Apply a function to each element of an array, once per second.
+outputter('sequentially').sequentially(['a','b','c']).periodically();
 
-
-// ^ Utilities
-
-// The JavaScript for this web page defines a couple of utility functions
-// that we can use to see what's going on.  `output` writes the
-// date and a message into the message area on this page.
-output('message');
-
-// `outputter` creates a function that calls `output` with an extra string.
-// We use it in the examples to make it easier to see which expression a
-// message is coming from.
-var fn = outputter('outputter');
-fn('argument');
+// Finally, apply each element of an array, starting out twice per
+// second, with incremental backoff.  (Not quite a one-liner, but one
+// expression and fewer than 100 characters.)
+outputter('sequentially').
+  sequentially('a few words'.split(' ')).
+  periodically(500, {backoff:true});
 
 
-// ^ Deferred Evaluation
+// ^ Deferred Execution
 
 // wait 1s, and then call `output`
 outputter('eventually').eventually(1000);
@@ -46,18 +35,25 @@ outputter('eventually').eventually(1000);
 // wait 1s, and then call `output` with no arguments
 output.eventually(1000);
 
-// call `output` at a specific time
+// call `output` at a specific date and time (here, one second in the
+// future)
 var when = new Date();
 when.setSeconds(when.getSeconds()+1);
 outputter('at').at(when);
 
 
-// ^ Repeated Evaluation
+// ^ Repeated Execution
+
+// run five times immediately
+outputter('repeatedly').only(5).repeatedly();
+
+// same as above
+outputter('repeatedly').repeatedly(5);
 
 // run five times at 1/2s intervals
 outputter('repeatedly').only(5).periodically(500);
 
-// run until the basis function returns stop
+// run until the `stop` is set to true
 stop = false;
 (function() {
     output('periodically');
@@ -97,14 +93,11 @@ fn(); fn(); fn(); fn();
 
 // `output` will be called at most once/second,
 // no matter how fast `fn` is called.
-var fn = outputter('infrequently').
-  incrementally().
-  infrequently(1000);
+var fn = outputter('infrequently').infrequently(1000);
 fn(); fn(); fn(); fn();
 
 // Same as above, but with incremental backoff
 var fn = outputter('infrequently w/backoff').
-  incrementally().
   infrequently(250, {backoff:true});
 fn(); fn(); fn(); fn();
 
@@ -143,3 +136,23 @@ mv.writer(function() {
 });
 mv.taker(outputter('mvar.taker 1'));
 mv.taker(outputter('mvar.taker 2'));
+
+
+// ^ Utilities
+
+// These are the utility functions that are used above.
+
+// The JavaScript for this web page defines a couple of utility
+// functions that we use to trace what's going on.  `output` writes
+// the date and a message into the message area on this page.
+output('message');
+
+// `outputter` creates a function that calls `output` with an extra string.
+// We use it in the examples to make it easier to see which expression a
+// message is coming from.
+var fn = outputter('outputter');
+fn('argument');
+
+// Each outputter prints an index number, if its called without arguments.
+var f1 = outputter('f1'); var f2 = outputter('f2');
+f1(); f2(); f1(); f1(); f1(); f2(); f1(); f2();

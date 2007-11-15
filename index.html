@@ -13,7 +13,7 @@
     <link rel="stylesheet" type="text/css" href="styles.css"/>
   </head>
   <body>
-    <h1>Sequentially<div>: Frequency Adverbs for JavaScript</div></h1>
+    <h1>Sequentially<span class="subtitle">: Frequency Adverbs for JavaScript</span></h1>
     <div class="navbar">
       <input type="checkbox" id="header-toggle" value="on" checked="checked"/> header
       | <a href="http://osteele.com/archives/2007/11/sequentially">announcement</a>
@@ -23,14 +23,24 @@
     </div>
     <div id="header">
       <div id="intro">
-        <p><dfn>Sequentially</dfn> is a library of frequency adverbs
-        for JavaScript.  It provides methods to queue a function for
-        deferred or repeated execution, and to control the rate or
-        count at which a function can be called.</p>
-        <P><dfn>Sequentially</dfn> also contains implementations of
-        Haskell <dfn><a href="http://www.haskell.org/ghc/docs/latest/html/libraries/base-3.0.0.0/Control-Concurrent-MVar.html">MVars</a></dfn>, that
-        can each be used to coordinate
-        data flow among asynchronously-scheduled functions.</p>
+        <p><dfn>Sequentially</dfn> is a library of temporal and
+        frequency adverbs for JavaScript.  It provides methods to
+        queue a function for deferred or repeated execution, and to
+        control the rate or count at which a function can be
+        called.</p>
+        <p>Sequentially also contains implementations of
+        Haskell <dfn><a
+        href="http://www.haskell.org/ghc/docs/latest/html/libraries/base-3.0.0.0/Control-Concurrent-MVar.html">MVars</a></dfn>,
+        that can each be used to coordinate data flow among
+        asynchronously-scheduled functions.</p>
+        <p><em>Functionally</em>, Sequentially is like a blend of
+        streams and generators, with processes.
+        <em>Computationally</em>, it's similar to the <a
+        href="http://en.wikipedia.org/wiki/Pi-calculus">&pi;-calculus</a>.
+        <em>Stylistically</em>, it can be used in a <dfn>adverbial
+        programming</dfn>, a paradigm that complements procedural
+        (verbal), object-oriented (noun phrase), and functional
+        (gerundive) programming.</p>
         <p>This is a <em>preview release</em>.  It hasn't been thoroughly
         tested, and I plan to make some major changes to the API as I
         continue to experiment how best to use this in my own programs.</p>
@@ -47,7 +57,7 @@
       </div>
     </div>
 
-    <div id="messages">
+    <div id="messages" class="left">
       <a href="#" class="left" title="Move this panel to the left side of the window.">&laquo;</a>
       <a href="#" class="right" title="Move this panel to the right side of the window.">&raquo;</a>
       <table>
@@ -65,7 +75,6 @@
         </td>
         <td valign="top">
           <h2>Examples <span class="download">(<a href="examples.js">source</a>)</span></h2>
-          <p>Click on a block to execute it.  Mouse over a message to highlight the block that it they came from.</p>
           <div id="examples" class="osdoc examples" style="z-index:10">Examples failed to load.</div>
         </td>
       </tr>

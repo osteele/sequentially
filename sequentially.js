@@ -86,9 +86,11 @@ Function.prototype.periodically = function(ms) {
     }
 }
 
-/** Call the function repeatedly until it returns nil. */
-Function.prototype.repeatedly = function() {
-    while (this.apply(null, arguments) !== Sequentially.nil)
+/** Call the function repeatedly until it returns nil.  If `count` is supplied,
+ * only run this many times. */
+Function.prototype.repeatedly = function(count) {
+    // !(undefined-- < 0) is true
+    while (!(--count < 0) && this.apply(null, arguments) !== Sequentially.nil)
         ;
     return Sequentially.nil;
 }
@@ -141,7 +143,7 @@ Function.cyclicly = function() {
 Array.prototype.sequentially = function(fn, ms, options) {
     options = options || {};
     var array = this,
-        ix = 0;
+        ix = -1;
    return next;
     function next() {
         // recompute the length each time, in case it's changing

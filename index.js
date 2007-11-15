@@ -70,16 +70,20 @@ var Examples = {
     },
 
     format: function() {
-        var e = $('examples');
-        e.innerHTML =
-            e.innerHTML.replace(/(<\/div>)((?:.+?\n)+)/g, '$1<div class="runnable">$2</div>');
+        var e = $('examples'),
+            text = (e.innerHTML
+                    .replace(/(<\/div>)((?:.+?\n)+)/g,
+                            '$1<div class="runnable">$2</div>')
+                    .replace(/(\(Click on(?:.|\n)*?\))/,
+                             '<span class="instr">$1</span>'));
+        e.innerHTML = text;
     },
 
     bind: function() {
         var e = $('examples'),
             mw = gMessageWindow;
         $$('#examples .runnable').each(function(item) {
-            var run = Examples.runOne.bind(null, item)
+            var run = Examples.runOne.bind(null, item, true)
             item.observe('mouseover', mw.highlightMessagesFrom.bind(mw, item));
             item.observe('mouseout', mw.highlightMessagesFrom.bind(mw, null));
             item.observe('click', run);
@@ -93,11 +97,19 @@ var Examples = {
         });
     },
 
-    runOne: function(item) {
+    runOne: function(item, clicked) {
+        clicked && $$('.instr').invoke('removeClassName', 'instr');
         var mw = gMessageWindow,
-            output = function() {
+            counters = {},
+            output = function(name) {
+                var args = Array.slice(arguments, 0);
+                if (args.length == 1 && typeof name == 'string') {
+                    var count = counters[name] || 0;
+                    args.push(count);
+                    counters[name] = count + 1;
+                }
                 mw.sourceElement = item;
-                mw.output.apply(mw, arguments);
+                mw.output.apply(mw, args);
             };
         var outputter = function(msg){return output.bind(null, msg)},
             text = item.innerHTML.replace(/&amp;/g, '&');
