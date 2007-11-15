@@ -1,0 +1,105 @@
+incrementally -> repeatedly ?
+
+- eventually vs. fork --- change it to run()?
+
+alternating(loadImage, createImage).only(100).periodically(1000);
+
+
+once()
+never()
+
+only().after(Date)
+only().before(Date)
+only().between(Date, Date)
+
+fn.only(100).periodically(1000).then(...)
+
+getImage.or(requestImageCreation).only(100).periodically(1000).then(warn)
+
+getImage.suspensefully().or(requestImageCreation)
+
+
+var fn = function(){return 1}.eventually();
+output(fn.join()); // calls it immediately
+
+// add error handling?
+Function.fork = function() {
+  var thread = setTimeout(fn, ms);
+  return {
+    cancel: function() {thread&&clearTimeout(thread); thread=null},
+    join: function() {thread&&clearTimeout(thread); thread=null;return fn();fn=null},
+  }
+}
+
+/// An argument to Function.sequentially eturns this to indicate that it should be
+/// called again.
+Sequentially.repeat = Sequentially.repeat || {toString:function(){return "Sequentially.repeat"}};
+
+
+
+/** Call this function every `ms` ms for a total of `count` times.
+ * If `options.after` is defined, it is called `ms` ms after the
+ * last call.
+ */
+Function.prototype.repeatedly = function(count, ms, options) {
+    var fn = this,
+        ix = 0;
+    options = options || {};
+    next.periodically(ms);
+    function next() {
+        if (count-- <= 0) return ((options.after||Function.I)(), true);
+        fn.call(options.thisObject, ix++);
+    }
+}
+
+pi = Pi.Name();
+
+exactly
+periodically
+eventually
+occasionally
+regularly
+[in]frequently
+sporadically
+
+adverbs of frequency
+always constantly continually frequently intermittently occasionally
+often periodically rarely regularly
+generally normally
+often seldom sometimes never
+daily (bi)weekly monthly yearly
+
+
+always, continually, frequently, occasionally, often, once, twice, periodically, repeatedly, sometimes, usually etc.
+b) ever, hardly ever, never, rarely, scarcely ever, seldom
+
+cf. priority and frequency
+
+
+ and <a
+        href="http://en.wikipedia.org/wiki/Pi-calculus">&pi;-calculus</a>
+        <dfn>named channels</dfn>
+
+
+function RemoteMVar(options) {
+    var mvar = MVar();
+    this.reader = mvar.reader;
+    ajax(Hash.merge({success:mvar.put}, options));
+}
+
+var Pi = {
+    Name: function(options) {
+        var mvar = MVar();
+        this.oninput = mvar.reader;
+        var throttledGetter = Function.maxtimes(5,
+            Function.throttled(
+                getter, 2000,
+                {fromEnd:true, backoff:true}),
+                                                reportError.bind(null, "couldn't connecto the server"));
+        throttledGetter();
+        function getter() {
+            ajax(Hash.merge({success:mvar.put, error:throttledGetter}, options));
+        }
+    }
+}
+

@@ -4,21 +4,15 @@
 - eventually vs. fork
 - after, before, until, consecutively, following, consequently, continuously
 
-maxtimes -> only; +once
-
-
-clauses with temporal links
-contingent requests
-
 * Naming
 - rename -> 'frequently'?
 - arg binding is inconsistent
 - rename 'exactly', 'periodically'
 
 * Examples
+-
 - more mvar examples
 - pi examples
 
-* Text
-- eventually vs. fork --- change it to run()?
-- mvar vs. queue
+* Packaging
+- add test links

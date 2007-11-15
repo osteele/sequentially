@@ -1,9 +1,33 @@
 /* Copyright 2007 by Oliver Steele.  Released under the MIT License. */
 
+// ^ One-liners
+
+// Here's a quick taste of what's below.  Here's a function that
+// receives a different argument each time you call it.
+var fn = outputter('incrementally').incrementally();
+fn(); fn(); fn();
+
+// Here's one that runs only twice, no matter how often you call it.
+var fn = outputter('only').incrementally().only(2);
+fn(); fn(); fn(); fn(); fn();
+
+// Here's one that runs only once per second, now matter how *fast*
+// you call it.
+var fn = outputter('infrequently').incrementally().infrequently();
+fn(); fn(); fn(); fn();
+
+// This one runs once per second, for a total of five times.
+var fn = outputter('periodically').incrementally().only(5).periodically();
+
+// Finally, here's a function that is applied to each element
+// of an array, once per second.
+outputter('mondo').sequentially(['a', 'b', 'c']).periodically();
+
+
 // ^ Utilities
 
-// The JavaScript for this web page defines `output` ---
-// the library doesn't.  It simply writes the
+// The JavaScript for this web page defines a couple of utility functions
+// that we can use to see what's going on.  `output` writes the
 // date and a message into the message area on this page.
 output('message');
 
@@ -13,11 +37,6 @@ output('message');
 var fn = outputter('outputter');
 fn('argument');
 
-// Finally, this library *does* define `incrementing` (and the rest
-// of the functions that are used below).  It calls its basis function
-// with an increasing counter each time.
-var fn = outputter('incrementing').incrementing();
-fn(); fn(); fn();
 
 // ^ Deferred Evaluation
 
@@ -30,68 +49,63 @@ output.eventually(1000);
 // call `output` at a specific time
 var when = new Date();
 when.setSeconds(when.getSeconds()+1);
-outputter('exactly').exactly(when);
+outputter('at').at(when);
+
 
 // ^ Repeated Evaluation
 
 // run five times at 1/2s intervals
-outputter('repeatedly').repeatedly(5, 500);
+outputter('repeatedly').only(5).periodically(500);
 
-// run until the basis function returns `false`
+// run until the basis function returns stop
 stop = false;
 (function() {
     output('periodically');
-    return !stop;
+    return stop && Sequentially.nil;
 }).periodically(1000);
 
 // evaluate this to turn off the loop above
 stop = true;
 
+
 // ^ Sequential Execution
 
-// Three different ways of applying a function to a sequence of elements.
-// Each defaults to a 10ms frequency; override this with an additonal
-// argument to any of the functions below.
-
 // Sequentially apply the argument function to the elements of this array.
-// This is equivalent to `Array#forEach`, except that the function
-// applications are temporally staggered.
+// This is equivalent to `Array#forEach`.
 ['[0]', '[1]', '[2]'].sequentially(
-    outputter('Array#sequentially'));
+    outputter('Array#sequentially.repeatedly')).repeatedly();
 
-// Sequentially apply this function to each element of the argument array.
-// Equivalent to `Array#sequentially`.
-output.sequentially(['fn.sequentially[0]',
-                     'fn.sequentially[1]',
-                     'fn.sequentially[2]']);
+// The same as above. except the function is called only once per second.
+['[0]', '[1]', '[2]'].sequentially(
+    outputter('Array#sequentially.periodically')).periodically();
 
-// Call each function in turn.
-Function.sequentially([
+// A new function that calls each function in turn.
+Function.sequentially(
     outputter('Function.sequentially[0]'),
     outputter('Function.sequentially[1]'),
-    outputter('Function.sequentially[2]'),
-]);
+    outputter('Function.sequentially[2]')
+).repeatedly();
 
 
-// ^ Throttling and other limits
+// ^ Throttling
 
 // Make a new functions that only calls the old one the first `n` times
 // it's called.  After this, it does nothing.  Note that there are four
 // function calls, but it only prints the message twice.
-var fn = outputter('maxtimes').maxtimes(2);
+var fn = outputter('only').only(2);
 fn(); fn(); fn(); fn();
 
 // `output` will be called at most once/second,
 // no matter how fast `fn` is called.
-var fn = outputter('throttled').
-  incrementing().
-  throttled(1000);
+var fn = outputter('infrequently').
+  incrementally().
+  infrequently(1000);
 fn(); fn(); fn(); fn();
 
 // Same as above, but with incremental backoff
-var fn = outputter('throttled w/backoff').
-  incrementing().
-  throttled(250, {backoff:true});
+var fn = outputter('infrequently w/backoff').
+  incrementally().
+  infrequently(250, {backoff:true});
 fn(); fn(); fn(); fn();
 
 
@@ -104,8 +118,8 @@ fn(); fn(); fn(); fn();
 
 // multiple readers wait for a write:
 var mv = MVar();
-mv.taker(outputter('mvar.take'));
-mv.taker(outputter('mvar.take'));
+mv.taker(outputter('mvar.take (before put) 1'));
+mv.taker(outputter('mvar.take (before put) 2'));
 mv.put(1);
 mv.put(2);
 
@@ -113,8 +127,8 @@ mv.put(2);
 var mv = MVar();
 mv.put(1);
 mv.put(2);
-mv.taker(outputter('mvar.take'));
-mv.taker(outputter('mvar.take'));
+mv.taker(outputter('mvar.take (after put) 1'));
+mv.taker(outputter('mvar.take (after put) 2'));
 
 // writers are also queued.  A writer isn't
 // called until the MVar is empty.
@@ -127,5 +141,5 @@ mv.writer(function() {
     output('mvar.write 1');
     return 1;
 });
-mv.taker(outputter('mvar.taker'));
-mv.taker(outputter('mvar.taker'));
+mv.taker(outputter('mvar.taker 1'));
+mv.taker(outputter('mvar.taker 2'));

@@ -1,3 +1,15 @@
+* Examples
+
+
+
+clauses with temporal links
+contingent requests
+
+
+
+* Topics
+- mvar vs. queue
+
 I've been doing a lot of client/server/server programming lately.  That is, the
 client talks to one server (the application server --- it's the one that manages
 sessions and the db), but it also talks to my content network, and this is
@@ -9,7 +21,7 @@ I decided that Erlang had the right idea.
 
 I never really got used to threads.  The experience of programming with multiple threads was frustrating for me.  The parts of the program that worked with synchronization were never integrated with the parts that weren't, and I continually had to move the firewall between the synchronized and thread-blind portion of the program.  (Sort of like the const/mutable firewall in C, or the Monad/expression firewall in Haskell.)
 
-I find it much more intuitive to think in terms of these little workers and waiters and watchers and listeners that you spin off.  It's the daemon idea from AI. 
+I find it much more intuitive to think in terms of these little workers and waiters and watchers and listeners that you spin off.  It's the daemon idea from AI.
 
 
 I use this in a style I call "adverbial programming".  Someday I'll post an entry about the analogy between computer languages and natural languages; for now, simply note that methods such as "eventually" and "repeatedly" modify a functions (verbs) to produce new functions with related meanings.  This is in contrast to object-oriented programming, which is all about noun phrases, and functional programming, which is largely about verbs.  (Closures, which bridge the gap between functional and OO, are gerunds.)
@@ -20,7 +32,7 @@ Object-oriented programming is all about nouns.  You can see this in some design
 
 Nouns are object; functions are verbs; statements are sentences.  A statement is evaluated for its effect on the mutable state of the program and the world; likewise, a natural-language sentence has an effect on the discourse model.  Some statements (IO statements, and other statements that manipulate external resources) have an effect on the world too; in natural language, these kinds of sentences, which reach outside of the discourse model, are performatives.
 
-Closures are gerunds.  English has distinct syntactic positions for 
+Closures are gerunds.  English has distinct syntactic positions for
 
 Function-level programming isn't really at the level of language use.  Using a functional programming style is similar to theorizing about natural language: curried (partially saturated) functions are the bread and butter of Montague and categorial grammars.
 

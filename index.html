@@ -28,10 +28,12 @@
         deferred or repeated execution, and to control the rate or
         count at which a function can be called.</p>
         <P><dfn>Sequentially</dfn> also contains implementations of
-        Haskell <dfn><a href="http://www.haskell.org/ghc/docs/latest/html/libraries/base-3.0.0.0/Control-Concurrent-MVar.html">MVars</a></dfn> and <a
-        href="http://en.wikipedia.org/wiki/Pi-calculus">&pi;-calculus</a>
-        <dfn>named channels</dfn>, that can each be used to coordinate
+        Haskell <dfn><a href="http://www.haskell.org/ghc/docs/latest/html/libraries/base-3.0.0.0/Control-Concurrent-MVar.html">MVars</a></dfn>, that
+        can each be used to coordinate
         data flow among asynchronously-scheduled functions.</p>
+        <p>This is a <em>preview release</em>.  It hasn't been thoroughly
+        tested, and I plan to make some major changes to the API as I
+        continue to experiment how best to use this in my own programs.</p>
       </div>
 
       <div id="noscript">
@@ -70,8 +72,9 @@
     </table>
     <div id="footer">
       Copyright 2007 by <a href="http://osteele.com">Oliver Steele</a>.  This work is licensed under the <a href="MIT-LICENSE">MIT license</a>.
-      <a href="#" id="write-tests">View</a>/<a href="#" id="run-tests">run</a> tests.
-      <a href="functional.js" target="_blank">View source</a>.
+      <div style="display:none">
+      <a href="#" id="write-tests">View</a>/<a href="#" id="run-tests">run</a> tests.</div>
+      <a href="sequentially.js" target="_blank">View source</a>.
     </div>
   </body>
 </html>

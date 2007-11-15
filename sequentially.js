@@ -7,6 +7,20 @@
  */
 
 
+/*
+ * ^ Globals
+ */
+
+// rhino compatibility
+typeof window == 'undefined' && (window = {});
+
+// The global namespace.
+var Sequentially = window.Sequentially || {};
+
+/// Return this to indicate that a process has stopped.
+Sequentially.nil = Sequentially.nil || {toString:function(){return "Sequentially.nil"}};
+
+
 /**
  * ^ Utilities
  */
@@ -28,7 +42,7 @@ Array.slice ||
  * list.  If there are additional arguments, they're prepended
  * (after the counter) too.
  */
-Function.prototype.incrementing = function() {
+Function.prototype.incrementally = function() {
     var fn = this,
         args = Array.slice(arguments);
     args.unshift(-1);
@@ -39,7 +53,7 @@ Function.prototype.incrementing = function() {
 }
 
 /**
- * ^ Timing
+ * ^ Temporal Adverbs
  */
 
 /** Call this function after `ms` ms.   If this function is called with
@@ -53,56 +67,64 @@ Function.prototype.eventually = function(ms) {
     setTimeout(fn, ms || 10);
 }
 
-/** Call this function at Date `when`, or immediately if `when` has
- * passed.
+/** Call this function at Date `when`, or immediately if `when` is
+ * in the past.
  */
-Function.prototype.exactly = function(when) {
+Function.prototype.at = function(when) {
     var args = Array.slice(arguments, 1),
         self = this,
         fn = function() {self.apply(this, args)};
     setTimeout(fn, Math.max(10, when - new Date()));
 }
 
-/** Call this function every `ms` ms until it returns `false`. */
+/** Call this function every `ms` ms (default 1000ms) until it returns nil. */
 Function.prototype.periodically = function(ms) {
     var fn = this,
-        thread = setInterval(tick, ms||10);
+        thread = setInterval(tick, ms||1000);
     function tick() {
-        fn() == false && clearInterval(thread);
+        fn() === Sequentially.nil && clearInterval(thread);
     }
 }
 
-/** Call this function every `ms` ms for a total of `count` times.
- * If `options.after` is defined, it is called `ms` ms after the
- * last call.
+/** Call the function repeatedly until it returns nil. */
+Function.prototype.repeatedly = function() {
+    while (this.apply(null, arguments) !== Sequentially.nil)
+        ;
+    return Sequentially.nil;
+}
+
+/** Sequentially apply this function to each element of `array`.
  */
-Function.prototype.repeatedly = function(count, ms, options) {
-    var fn = this,
-        ix = 0;
+Function.prototype.sequentially = function(array, options) {
     options = options || {};
-    next.periodically(ms);
+    var fn = this,
+        ix = -1;
+    return next;
     function next() {
-        if (count-- <= 0) return ((options.after||Function.I)(), true);
-        fn.call(options.thisObject, ix++);
+        if (++ix >= array.length) return Sequentially.nil;
+        return fn.call(options.thisObject, array[ix], ix);
     }
-}
-
-/** Sequentially apply this function to each element of `array`,
- * every `ms` ms.  See `Array#sequentially` for additional `options`.
- */
-Function.prototype.sequentially = function(array, ms, options) {
-    return array.sequentially(this, ms, options);
 }
 
 /** Call each function in `array`, an array of functions. */
-Function.sequentially = function(array, ms, options) {
-    var ix = 0,
-        len = array.length;
-    options = options || {};
-    next.periodically(ms);
+Function.sequentially = function() {
+    var array = Array.slice(arguments, 0),
+        ix = -1;
+    return next;
     function next() {
-        if (ix >= len) return ((options.after||Function.I)(), false);
-        array[ix].call(options.thisObject, ix++);
+        if (++ix >= array.length) return Sequentially.nil;
+        return array[ix].call(this);
+    }
+}
+
+/** Call each function in `array`, an array of functions. */
+Function.cyclicly = function() {
+    var fns = Array.slice(arguments, 0),
+        ix = -1;
+    return next;
+    function next() {
+        ix = (++x) % array.length;
+        return array[ix].call(this);
     }
 }
 
@@ -117,35 +139,34 @@ Function.sequentially = function(array, ms, options) {
  * options.thisObject: `this` object for function call
  */
 Array.prototype.sequentially = function(fn, ms, options) {
+    options = options || {};
     var array = this,
         ix = 0;
-    options = options || {};
-    next.periodically(ms);
+   return next;
     function next() {
         // recompute the length each time, in case it's changing
-        if (ix >= array.length) return ((options.after||Function.I)(), false);
+        if (++ix >= array.length) return Sequentially.nil;
         fn.call(options.thisObject, array[ix], ix);
-        ix += 1;
     }
 }
 
 
 /**
- * ^ Throttling
+ * ^ Limits
  */
 
 /** Returns a new function that will call the basis function the first
  * `n` times that it's called, and then do nothing.  If `after` is
- * defined, it will be used the `n`+1 time.
+ * defined, it will be called the `n`+1 time.
  */
-Function.prototype.maxtimes = function(count, after) {
+Function.prototype.only = function(count, after) {
     var fn = this;
     return function() {
         if (--count < 0) {
             fn = after;
             after = undefined;
         }
-        return fn && fn.apply(this, arguments);
+        return fn ? fn.apply(this, arguments) : Sequentially.nil;
     }
 }
 
@@ -164,8 +185,8 @@ Function.prototype.maxtimes = function(count, after) {
  * options.fromEnd (false): if true, the delay is from end to start instead
  * of start-to-start.
  */
-Function.prototype.throttled = function(interval, options) {
-    interval = interval || 10;
+Function.prototype.infrequently = function(interval, options) {
+    interval = interval || 1000;
     options = options || {};
     var fn = this,
         lastTime = null,
@@ -255,28 +276,6 @@ function MVar() {
         if (!value && writers.length) {
             var writer = writers.shift();
             put(writer());
-        }
-    }
-}
-
-function RemoteMVar(options) {
-    var mvar = MVar();
-    this.reader = mvar.reader;
-    ajax(Hash.merge({success:mvar.put}, options));
-}
-
-var Pi = {
-    Name: function(options) {
-        var mvar = MVar();
-        this.oninput = mvar.reader;
-        var throttledGetter = Function.maxtimes(5,
-            Function.throttled(
-                getter, 2000,
-                {fromEnd:true, backoff:true}),
-                                                reportError.bind(null, "couldn't connecto the server"));
-        throttledGetter();
-        function getter() {
-            ajax(Hash.merge({success:mvar.put, error:throttledGetter}, options));
         }
     }
 }

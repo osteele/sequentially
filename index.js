@@ -1,5 +1,6 @@
 /* Copyright 2007 by Oliver Steele.  Available under the MIT License. */
 
+var gDocs;
 var gMessageWindow;
 
 function initialize() {
@@ -8,48 +9,17 @@ function initialize() {
         'If this message remains on the screen,');
     new OSDoc.ExampleViewer().load('examples.js', {
         onSuccess: function() {
+            Examples.initialize(true);
             noteCompletion('examples');
-            formatExamples();
-            bindExamples();
         },
         target: 'examples'});
-    new OSDoc.APIViewer().load('sequentially.js', {
+    gDocs = new OSDoc.APIViewer().load('sequentially.js', {
         onSuccess: noteCompletion.saturate('docs'),
         target: 'docs'});
     initializeHeaderToggle();
     initializeTestLinks();
 
     gMessageWindow = new MessageWindow();
-}
-
-function formatExamples() {
-    var e = $('examples');
-    e.innerHTML =
-        e.innerHTML.replace(/(<\/div>)((?:.+?\n)+)/g, '$1<div class="runnable">$2</div>');
-}
-
-function bindExamples() {
-    var e = $('examples'),
-        mw = gMessageWindow;
-    $$('#examples .runnable').each(function(item) {
-        item.observe('mouseover', mw.highlightMessagesFrom.bind(mw, item));
-        item.observe('mouseout', mw.highlightMessagesFrom.bind(mw, null));
-        item.observe('click', run);
-        run();
-        function run() {
-            function output() {
-                mw.sourceElement = item;
-                mw.output.apply(mw, arguments);
-            }
-            try {
-                with ({output:output,
-                       outputter:function(msg){return output.bind(null, msg)}})
-                    eval(item.innerHTML);
-            } catch (e) {
-                output(['<span class="error">', e, '</span>'].join(''));
-            }
-        }
-    });
 }
 
 function initializeHeaderToggle() {
@@ -84,6 +54,60 @@ function noteCompletion(flag) {
             alert(results.toHTML());
         }
         scheduleGradientReset();
+    }
+}
+
+
+/*
+ * Examples
+ */
+
+var Examples = {
+    initialize: function(run) {
+        Examples.format();
+        Examples.bind();
+        run && Examples.run();
+    },
+
+    format: function() {
+        var e = $('examples');
+        e.innerHTML =
+            e.innerHTML.replace(/(<\/div>)((?:.+?\n)+)/g, '$1<div class="runnable">$2</div>');
+    },
+
+    bind: function() {
+        var e = $('examples'),
+            mw = gMessageWindow;
+        $$('#examples .runnable').each(function(item) {
+            var run = Examples.runOne.bind(null, item)
+            item.observe('mouseover', mw.highlightMessagesFrom.bind(mw, item));
+            item.observe('mouseout', mw.highlightMessagesFrom.bind(mw, null));
+            item.observe('click', run);
+        });
+    },
+
+    run: function() {
+        var e = $('examples');
+        $$('#examples .runnable').each(function(item) {
+            Examples.runOne(item);
+        });
+    },
+
+    runOne: function(item) {
+        var mw = gMessageWindow,
+            output = function() {
+                mw.sourceElement = item;
+                mw.output.apply(mw, arguments);
+            };
+        var outputter = function(msg){return output.bind(null, msg)},
+            text = item.innerHTML.replace(/&amp;/g, '&');
+        try {
+            with ({output: output,
+                   outputter: outputter})
+                eval(text);
+        } catch (e) {
+            output(['<span class="error">', e, '</span>'].join(''));
+        }
     }
 }
 
