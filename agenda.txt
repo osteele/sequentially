@@ -8,3 +8,6 @@
 
 * Packaging
 - add test links
+
+move to non-prototype functions to namespace
+should cyclicly = sequentially.repeatedly

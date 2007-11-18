@@ -6,9 +6,9 @@
 // below to execute it.  Click on a message in the message window to
 // see where it came from.)
 
-// `outputter` returns a function that prints a message to the message
-// panel.  It's not part of this library and it doesn't use it, but
-// it's useful in these examples.
+// `outputter` creates a function that prints a message to the message
+// panel.  It's not part of this library, but I use it in the examples
+// show what's going on.
 var fn = outputter('message');
 fn(); fn();
 
@@ -104,19 +104,22 @@ fn(); fn(); fn();
 // all immediately, but this could also be used as a target to
 // `repeatedly` or `periodically`, possibly with an intermediate
 // `infrequently` to throttle its.
-var fn = Function.sequentially(
-    outputter('Function.sequentially[0]'),
-    outputter('Function.sequentially[1]'),
-    outputter('Function.sequentially[2]')
+var fn = Sequentially.sequentially(
+    outputter('A'), outputter('B'), outputter('B')
 )
-fn(); fn(); fn();
+fn(1); fn(2); fn(3);
+
+// Alternate between two functions.
+var fn = Sequentially.cyclicly(
+    outputter('A'), outputter('B'));
+fn(1); fn(2); fn(3); fn(4);
 
 
 // ^ Throttling
 
 // `fn` only invokes the outputter the first `n` times it's called.
 // After this, it does nothing.  Note that there are four function
-// calls, but it only prints the message twice.
+// calls, but the message is printed only twice.
 var fn = outputter('only').only(2);
 fn(); fn(); fn(); fn();
 

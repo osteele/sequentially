@@ -46,7 +46,7 @@ var Examples = {
         clicked && $$('.instr').invoke('removeClassName', 'instr');
         var mw = gMessageWindow,
             counters = {},
-            text = item.innerHTML.replace(/&amp;/g, '&');
+            text = item.innerHTML.replace(/&gt;/g, '>').replace(/&amp;/g, '&');
         function output(name) {
                 var args = Array.slice(arguments, 0);
                 if (args.length == 1 && typeof name == 'string') {

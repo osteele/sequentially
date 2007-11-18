@@ -22,48 +22,21 @@
       | <a href="http://osteele.com/archives/2007/11/sequentially">announcement</a>
       </span>
       | download:
-      <a href="sequentially.min.js.gz">compressed (&lt;2K min gz)</a>
+      <a href="sequentially.min.js.gz">compressed (&lt;1K min gz)</a>
       | <a href="sequentially.js">source</a>
     </div>
     <div id="header">
       <div id="intro">
         <p><dfn>Sequentially</dfn> is a library of temporal and
         frequency adverbs for JavaScript.  It provides methods to
-        queue a function for deferred or repeated execution, and to
-        control the rate or number of times that a function can be
-        called.</p>
+        queue a function for deferred or periodic execution, and to
+        throttle the rate or number of times that a function can be
+        called.  You could think of it as a kind of memoization, where
+        instead of caching the result it modifies <em>when</em> and
+        <em>whether</em> a function is called.</p>
 
-        <p>I use this to write client-side programs that do things
-        like periodically ask an application server to recreate a
-        resource if it's not available from an asset server, but
-        throttle the requests and eventually back off and then give up
-        if it looks like the server is too busy or down.</p>
-
-        <p>Sequentially also contains a partial port of Haskell's <dfn><a
-        href="http://www.haskell.org/ghc/docs/latest/html/libraries/base-3.0.0.0/Control-Concurrent-MVar.html">MVars</a></dfn>,
-        that can each be used to coordinate data flow among
-        periodic functions functions (threads).</p>
-
-        <p><em>Functionally</em>, Sequentially combines data flow
-        programming with simple process scheduling.
-
-        <em>Stylistically</em>, Sequentially can be used in
-        <dfn>adverbial programming</dfn>, a paradigm that complements
-        procedural (verb-base), object-oriented (noun-based), and
-        functional (gerundive) programming.  <em>Theoretically</em>,
-        Sequentially uses closures to embed (some of) the <a
-        href="http://en.wikipedia.org/wiki/Pi-calculus">&pi;-calculus</a>
-        in JavaScript.  Alternatively, it's the CPS conversion of the
-        categorical dual of <a
-        href="http://en.wikipedia.org/wiki/Generator_%28computer_science%29">generators</a>.
-        Or maybe it's the Chu space dual of <a
-        href="../functional">Functional JavaScript</a>.  Oh, never
-        mind, it's just a few combinators for frequency,
-        iteration, and time.</p>
-
-        <p>This is a <em>preview release</em>.  It hasn't been thoroughly
-        tested, and I plan to make some major changes to the API as I
-        continue to experiment how best to use this in my own programs.</p>
+        <p>This is a <em>preview release</em>.  I'll probably change the API
+        as I experiment with how best to use this in my own programs.</p>
       </div>
 
       <div id="noscript">

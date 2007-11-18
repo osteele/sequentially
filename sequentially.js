@@ -22,37 +22,6 @@ Sequentially.nil = Sequentially.nil || {toString:function(){return "Sequentially
 
 
 /**
- * ^ Utilities
- */
-
-Function.I = function(x){return x};
-Function.K = function(x){return function(){return x}};
-
-// mozilla already supports this
-Array.slice ||
-    (Array.slice = (function() {
-        var slice = Array.prototype.slice;
-        return function(object) {
-            return slice.apply(object, slice.call(arguments, 1));
-        };
-    })());
-
-/** Returns a function that calls this one with an incrementing
- * zero-based counter spliced into the beginning of the argument
- * list.  If there are additional arguments, they're prepended
- * (after the counter) too.
- */
-Function.prototype.incrementally = function() {
-    var fn = this,
-        args = Array.slice(arguments);
-    args.unshift(-1);
-    return function() {
-        args[0] += 1;
-        return fn.apply(this, args.concat(Array.slice(arguments)));
-    }
-}
-
-/**
  * ^ Temporal Adverbs
  */
 
@@ -77,6 +46,9 @@ Function.prototype.at = function(when) {
     setTimeout(fn, Math.max(10, when - new Date()));
 }
 
+
+/// ^ Frequency Adverbs
+
 /** Call this function every `ms` ms (default 1000ms) until it returns nil. */
 Function.prototype.periodically = function(ms) {
     var fn = this,
@@ -94,68 +66,6 @@ Function.prototype.repeatedly = function(count) {
         ;
     return Sequentially.nil;
 }
-
-/** Sequentially apply this function to each element of `array`.
- */
-Function.prototype.sequentially = function(array, options) {
-    options = options || {};
-    var fn = this,
-        ix = -1;
-    return next;
-    function next() {
-        if (++ix >= array.length) return Sequentially.nil;
-        return fn.call(options.thisObject, array[ix], ix);
-    }
-}
-
-/** Call each function in `array`, an array of functions. */
-Function.sequentially = function() {
-    var array = Array.slice(arguments, 0),
-        ix = -1;
-    return next;
-    function next() {
-        if (++ix >= array.length) return Sequentially.nil;
-        return array[ix].call(this);
-    }
-}
-
-/** Call each function in `array`, an array of functions. */
-Function.cyclicly = function() {
-    var fns = Array.slice(arguments, 0),
-        ix = -1;
-    return next;
-    function next() {
-        ix = (++x) % array.length;
-        return array[ix].call(this);
-    }
-}
-
-/** Apply `fn` to each element of this array, every `ms` ms.
- * Ignores the results.  `fn` is applied to `options.thisObject`
- * (as `this`), the array element, and its index.
- *
- * Options:
- *
- * options.after: call this function after the last item
- *
- * options.thisObject: `this` object for function call
- */
-Array.prototype.sequentially = function(fn, ms, options) {
-    options = options || {};
-    var array = this,
-        ix = -1;
-   return next;
-    function next() {
-        // recompute the length each time, in case it's changing
-        if (++ix >= array.length) return Sequentially.nil;
-        fn.call(options.thisObject, array[ix], ix);
-    }
-}
-
-
-/**
- * ^ Limits
- */
 
 /** Returns a new function that will call the basis function the first
  * `n` times that it's called, and then do nothing.  If `after` is
@@ -210,5 +120,100 @@ Function.prototype.infrequently = function(interval, options) {
             if (options.fromEnd)
                 lastTime = new Date();
         }
+    }
+}
+
+
+/// ^ Sequencing Adverbs
+///
+/// These sequence a function across an array.
+
+/** Sequentially apply this function to each element of `array`.
+ */
+Function.prototype.sequentially = function(array, options) {
+    options = options || {};
+    var fn = this,
+        ix = -1;
+    return next;
+    function next() {
+        if (++ix >= array.length) return Sequentially.nil;
+        return fn.call(options.thisObject, array[ix], ix);
+    }
+}
+
+/** Each time the result function is called, it calls the next
+ * function in the original argument list.  Finally returns
+ * `Sequentially.nil`. */
+Sequentially.sequentially = function() {
+    var fns = Array.slice(arguments, 0),
+        ix = -1;
+    return next;
+    function next() {
+        if (++ix >= fns.length) return Sequentially.nil;
+        return fns[ix].apply(this, arguments);
+    }
+}
+
+/** Same as `Sequentially.sequentially`, except starts with the first
+ * function again after the last one has been called. */
+Sequentially.cyclicly = function() {
+    var fns = Array.slice(arguments, 0),
+        ix = -1;
+    return next;
+    function next() {
+        if (!fns.length) return Sequentially.nil;
+        ix = (ix + 1) % fns.length;
+        return fns[ix].apply(this, arguments);
+    }
+}
+
+/** Apply `fn` to each element of this array, every `ms` ms.
+ * Ignores the results.  `fn` is applied to `options.thisObject`
+ * (as `this`), the array element, and its index.
+ *
+ * Options:
+ *
+ * options.after: call this function after the last item
+ *
+ * options.thisObject: `this` object for function call
+ */
+Array.prototype.sequentially = function(fn, ms, options) {
+    options = options || {};
+    var array = this,
+        ix = -1;
+   return next;
+    function next() {
+        // recompute the length each time, in case it's changing
+        if (++ix >= array.length) return Sequentially.nil;
+        fn.call(options.thisObject, array[ix], ix);
+    }
+}
+
+
+/**
+ * ^ Utilities
+ */
+
+// mozilla already supports this
+Array.slice ||
+    (Array.slice = (function() {
+        var slice = Array.prototype.slice;
+        return function(object) {
+            return slice.apply(object, slice.call(arguments, 1));
+        };
+    })());
+
+/** Returns a function that calls this one with an incrementing
+ * zero-based counter spliced into the beginning of the argument
+ * list.  If there are additional arguments, they're prepended
+ * (after the counter) too.
+ */
+Function.prototype.incrementally = function() {
+    var fn = this,
+        args = Array.slice(arguments);
+    args.unshift(-1);
+    return function() {
+        args[0] += 1;
+        return fn.apply(this, args.concat(Array.slice(arguments)));
     }
 }
