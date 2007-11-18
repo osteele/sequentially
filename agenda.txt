@@ -1,7 +1,6 @@
 * Next
-- fix mvar
-- split mvars into a separate file
-- promises and futures
+- fix double doc
+- reorganize apidoc to match examples
 - stream library
 - until, while, combinators a{n}0 ab*
 - eventually vs. fork

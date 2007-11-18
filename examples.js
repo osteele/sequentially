@@ -129,39 +129,3 @@ fn(); fn(); fn(); fn();
 var fn = outputter('infrequently w/backoff').
   infrequently(250, {backoff:true});
 fn(); fn(); fn(); fn();
-
-
-// ^ MVar
-
-// An `MVar` is an asynchronous channel that synchronizes
-// readers and writers.  `MVar` implements (most of) the
-// Haskell `MVar` interface, but using funargs instead of
-// the `IO` monad.
-
-// multiple readers wait for a write:
-var mv = MVar();
-mv.taker(outputter('mvar.take (before put) 1'));
-mv.taker(outputter('mvar.take (before put) 2'));
-mv.put(1);
-mv.put(2);
-
-// writes are queued for the next read:
-var mv = MVar();
-mv.put(1);
-mv.put(2);
-mv.taker(outputter('mvar.take (after put) 1'));
-mv.taker(outputter('mvar.take (after put) 2'));
-
-// writers are also queued.  A writer isn't
-// called until the MVar is empty.
-var mv = MVar();
-mv.writer(function() {
-    output('mvar.write 0');
-    return 0;
-});
-mv.writer(function() {
-    output('mvar.write 1');
-    return 1;
-});
-mv.taker(outputter('mvar.taker 1'));
-mv.taker(outputter('mvar.taker 2'));
