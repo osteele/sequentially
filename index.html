@@ -8,6 +8,8 @@
     <script type="text/javascript" src="sequentially.js"></script>
     <script type="text/javascript" src="../osdoc/Base.js"></script>
     <script type="text/javascript" src="../osdoc/osdoc.js"></script>
+    <script type="text/javascript" src="../osdoc/viewer.js"></script>
+    <script type="text/javascript" src="message-viewer.js"></script>
     <script type="text/javascript" src="index.js"></script>
     <link rel="stylesheet" type="text/css" href="../osdoc/osdoc.css"/>
     <link rel="stylesheet" type="text/css" href="styles.css"/>
@@ -28,20 +30,20 @@
         <p><dfn>Sequentially</dfn> is a library of temporal and
         frequency adverbs for JavaScript.  It provides methods to
         queue a function for deferred or repeated execution, and to
-        control the rate or total count at which a function can be
+        control the rate or number of times that a function can be
         called.</p>
-        
+
         <p>I use this to write client-side programs that do things
         like periodically ask an application server to recreate a
         resource if it's not available from an asset server, but
         throttle the requests and eventually back off and then give up
         if it looks like the server is too busy or down.</p>
-        
-        <p>Sequentially also contains a partial port Haskell's <dfn><a
+
+        <p>Sequentially also contains a partial port of Haskell's <dfn><a
         href="http://www.haskell.org/ghc/docs/latest/html/libraries/base-3.0.0.0/Control-Concurrent-MVar.html">MVars</a></dfn>,
         that can each be used to coordinate data flow among
-        asynchronously-scheduled functions.</p>
-        
+        periodic functions functions (threads).</p>
+
         <p><em>Functionally</em>, Sequentially combines data flow
         programming with simple process scheduling.
 
@@ -52,12 +54,12 @@
         Sequentially uses closures to embed (some of) the <a
         href="http://en.wikipedia.org/wiki/Pi-calculus">&pi;-calculus</a>
         in JavaScript.  Alternatively, it's the CPS conversion of the
-        categorial dual of <a
+        categorical dual of <a
         href="http://en.wikipedia.org/wiki/Generator_%28computer_science%29">generators</a>.
         Or maybe it's the Chu space dual of <a
-        href="../functional">Functional JavaScript</a>.  Or, it's
-        nothing more than a few combinators for frequency, iteration,
-        and time.</p>
+        href="../functional">Functional JavaScript</a>.  Oh, never
+        mind, it's just a few combinators for frequency,
+        iteration, and time.</p>
 
         <p>This is a <em>preview release</em>.  It hasn't been thoroughly
         tested, and I plan to make some major changes to the API as I

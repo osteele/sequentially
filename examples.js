@@ -8,16 +8,16 @@
 
 // `outputter` returns a function that prints a message to the message
 // panel.  It's not part of this library and it doesn't use it, but
-// it's useful for illustrating it.
+// it's useful in these examples.
 var fn = outputter('message');
 fn(); fn();
 
 // Defines a function that calls the outputter only once per second,
-// now matter how frequently you call `fn`.
+// no matter how frequently you call `fn`.
 var fn = outputter('infrequently').infrequently();
 fn(); fn(); fn(); fn();
 
-// Defines a function that only calls the outputter twice, no matter
+// Defines a function that calls the outputter only twice, no matter
 // how many times you call `fn`.
 var fn = outputter('only').only(2);
 fn(); fn(); fn(); fn(); fn();
@@ -25,7 +25,7 @@ fn(); fn(); fn(); fn(); fn();
 // This calls the outputter five times in a row, right now.
 outputter('repeatedly').only(5).repeatedly();
 
-// This calls it once per second, for a total of five times.
+// This calls it five times, once per second.
 outputter('periodically').only(5).periodically();
 
 // Apply the outputter sequentially to each element of the array, once
@@ -38,8 +38,7 @@ outputter('seq').sequentially(['a','b','c']).periodically();
 // wait one second, and then call `output` with no arguments
 output.eventually(1000);
 
-// wait one second, and then call the outputter (the function returned
-// by `outputter(...)`).
+// wait one second, and then call the outputter
 outputter('eventually').eventually(1000);
 
 // call `output` at a specific date and time (here, one second in the
@@ -57,15 +56,20 @@ outputter('repeatedly').only(5).repeatedly();
 // same as above
 outputter('repeatedly').repeatedly(5);
 
-// run five times at 0.5s intervals
-outputter('repeatedly').only(5).periodically(500);
+// run five times at one second intervals
+outputter('repeatedly').only(5).periodically();
 
-// run until `stop` is set true
+// run one function once a second, and another
+// twice a second
+outputter('repeatedly 1s').only(5).periodically(1000);
+outputter('repeatedly .5s').only(10).periodically(500);
+
+// once a second until `stop` is set true
 stop = false;
 (function() {
     output('periodically');
     return stop && Sequentially.nil;
-}).periodically(1000);
+}).periodically();
 
 // evaluate this to stop the loop above
 stop = true;
@@ -161,23 +165,3 @@ mv.writer(function() {
 });
 mv.taker(outputter('mvar.taker 1'));
 mv.taker(outputter('mvar.taker 2'));
-
-
-// ^ Tracing Functions
-
-// The JavaScript for this web page defines a couple of utility
-// functions that are used above to trace what's going on.
-
-// `output` writes the date and a message into the message area on
-// this page.
-output('message');
-
-// `outputter` creates a function that calls `output` with an extra string.
-// We use it in the examples to make it easier to see which expression a
-// message is coming from.
-var fn = outputter('outputter');
-fn('argument');
-
-// Each outputter prints an index number, if its called without arguments.
-var f1 = outputter('f1'); var f2 = outputter('f2');
-f1(); f2(); f1(); f1(); f1(); f2(); f1(); f2();

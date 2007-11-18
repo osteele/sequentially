@@ -1,18 +1,11 @@
 * Next
+- fix mvar
+- split mvars into a separate file
 - promises and futures
+- stream library
 - until, while, combinators a{n}0 ab*
 - eventually vs. fork
 - after, before, until, consecutively, following, consequently, continuously
-
-* Naming
-- rename -> 'frequently'?
-- arg binding is inconsistent
-- rename 'exactly', 'periodically'
-
-* Examples
--
-- more mvar examples
-- pi examples
 
 * Packaging
 - add test links
