@@ -32,8 +32,9 @@ Sequentially.nil = Sequentially.nil || {toString:function(){return "Sequentially
 Function.prototype.eventually = function(ms) {
     var args = Array.slice(arguments, 1),
         self = this,
-        fn = function() {self.apply(this, args)};
-    setTimeout(fn, ms || 10);
+        fn = function() {self.apply(this, args)},
+        thread = setTimeout(fn, ms || 10);
+    return {cancel:function(){clearTimeout(thread)}};
 }
 
 /** Call this function at Date `when`, or immediately if `when` is
@@ -42,8 +43,9 @@ Function.prototype.eventually = function(ms) {
 Function.prototype.at = function(when) {
     var args = Array.slice(arguments, 1),
         self = this,
-        fn = function() {self.apply(this, args)};
-    setTimeout(fn, Math.max(10, when - new Date()));
+        fn = function() {self.apply(this, args)},
+        thread = setTimeout(fn, Math.max(10, when - new Date()));
+    return {cancel:function(){clearTimeout(thread)}};
 }
 
 
@@ -52,10 +54,12 @@ Function.prototype.at = function(when) {
 /** Call this function every `ms` ms (default 1000ms) until it returns nil. */
 Function.prototype.periodically = function(ms) {
     var fn = this,
-        thread = setInterval(tick, ms||1000);
-    function tick() {
-        fn() === Sequentially.nil && clearInterval(thread);
-    }
+        thread = null;
+    start();
+    return {stop:stop, start:start};
+    function stop() {thread && clearTimeout(thread); thread=null}
+    function start() {thread || (thread = setInterval(tick, ms||1000))}
+    function tick() {fn() === Sequentially.nil && stop(thread)}
 }
 
 /** Call the function repeatedly until it returns nil.  If `count` is supplied,
@@ -106,6 +110,9 @@ Function.prototype.infrequently = function(interval, options) {
     return function() {
         var self = this,
             args = Array.slice(arguments, 0);
+        // Always run after the caller returns.  This makes the
+        // throttled and unthrottled case look the same to the caller,
+        // which avoids a subtle source of bugs.
         setTimeout(run, 10);
         function run() {
             var now = new Date,
@@ -128,16 +135,18 @@ Function.prototype.infrequently = function(interval, options) {
 ///
 /// These sequence a function across an array.
 
-/** Sequentially apply this function to each element of `array`.
- */
-Function.prototype.sequentially = function(array, options) {
+/** Return a function that sequentially applies this function to each
+ * element of `array`.  Each time the return function is called, it applies
+ * this function to the next element each.of the array, finally returning
+ * `Sequentially.nil`. */
+Function.prototype.sequentially = function(array, thisObject) {
     options = options || {};
     var fn = this,
         ix = -1;
     return next;
     function next() {
         if (++ix >= array.length) return Sequentially.nil;
-        return fn.call(options.thisObject, array[ix], ix);
+        return fn.call(thisObject, array[ix], ix);
     }
 }
 
@@ -168,16 +177,10 @@ Sequentially.cyclicly = function() {
 }
 
 /** Apply `fn` to each element of this array, every `ms` ms.
- * Ignores the results.  `fn` is applied to `options.thisObject`
+ * Ignores the results.  `fn` is applied to `thisObject`
  * (as `this`), the array element, and its index.
- *
- * Options:
- *
- * options.after: call this function after the last item
- *
- * options.thisObject: `this` object for function call
  */
-Array.prototype.sequentially = function(fn, ms, options) {
+Array.prototype.sequentially = function(fn, ms, thisObject) {
     options = options || {};
     var array = this,
         ix = -1;
@@ -185,7 +188,7 @@ Array.prototype.sequentially = function(fn, ms, options) {
     function next() {
         // recompute the length each time, in case it's changing
         if (++ix >= array.length) return Sequentially.nil;
-        fn.call(options.thisObject, array[ix], ix);
+        fn.call(thisObject, array[ix], ix);
     }
 }
 

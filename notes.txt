@@ -1,71 +1,24 @@
 // Finally, apply each element of an array, starting out once per
-// second, with incremental backoff.  (Not quite a one-liner with this
-// page layout, but it could be :-)
+// second, with incremental backoff.
 outputter('sequentially').
   sequentially('a few words'.split(' ')).
   periodically(1000, {backoff:true});
 
-
-// The same as above. except the function is called only once per second.
-//['[0]', '[1]', '[2]'].sequentially(
-//    outputter('Array#sequentially.periodically')).infrequently().repeatedly();
-
-
-incrementally -> repeatedly ?
-
-- eventually vs. fork --- change it to run()?
+Here's a function that
+// receives a different argument each time you call it.
+var fn = outputter('incrementally').incrementally();
+fn(); fn(); fn();
 
 alternating(loadImage, createImage).only(100).periodically(1000);
-
-
-once()
-never()
-
-only().after(Date)
-only().before(Date)
-only().between(Date, Date)
-
-fn.only(100).periodically(1000).then(...)
-
-getImage.or(requestImageCreation).only(100).periodically(1000).then(warn)
-
-getImage.suspensefully().or(requestImageCreation)
-
 
 var fn = function(){return 1}.eventually();
 output(fn.join()); // calls it immediately
 
 // add error handling?
-Function.fork = function() {
-  var thread = setTimeout(fn, ms);
-  return {
-    cancel: function() {thread&&clearTimeout(thread); thread=null},
-    join: function() {thread&&clearTimeout(thread); thread=null;return fn();fn=null},
-  }
-}
-
 /// An argument to Function.sequentially eturns this to indicate that it should be
 /// called again.
 Sequentially.repeat = Sequentially.repeat || {toString:function(){return "Sequentially.repeat"}};
 
-
-
-/** Call this function every `ms` ms for a total of `count` times.
- * If `options.after` is defined, it is called `ms` ms after the
- * last call.
- */
-Function.prototype.repeatedly = function(count, ms, options) {
-    var fn = this,
-        ix = 0;
-    options = options || {};
-    next.periodically(ms);
-    function next() {
-        if (count-- <= 0) return ((options.after||Function.I)(), true);
-        fn.call(options.thisObject, ix++);
-    }
-}
-
-pi = Pi.Name();
 
 exactly
 periodically
@@ -87,31 +40,3 @@ always, continually, frequently, occasionally, often, once, twice, periodically,
 b) ever, hardly ever, never, rarely, scarcely ever, seldom
 
 cf. priority and frequency
-
-Here's a function that
-// receives a different argument each time you call it.
-var fn = outputter('incrementally').incrementally();
-fn(); fn(); fn();
-
-function RemoteMVar(options) {
-    var mvar = MVar();
-    this.reader = mvar.reader;
-    ajax(Hash.merge({success:mvar.put}, options));
-}
-
-var Pi = {
-    Name: function(options) {
-        var mvar = MVar();
-        this.oninput = mvar.reader;
-        var throttledGetter = Function.maxtimes(5,
-            Function.throttled(
-                getter, 2000,
-                {fromEnd:true, backoff:true}),
-                                                reportError.bind(null, "couldn't connecto the server"));
-        throttledGetter();
-        function getter() {
-            ajax(Hash.merge({success:mvar.put, error:throttledGetter}, options));
-        }
-    }
-}
-

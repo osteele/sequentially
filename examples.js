@@ -132,3 +132,27 @@ fn(); fn(); fn(); fn();
 var fn = outputter('infrequently w/backoff').
   infrequently(250, {backoff:true});
 fn(); fn(); fn(); fn();
+
+// ^ Job Control
+
+// You can cancel a scheduled function, or suspend and resume a periodic
+// one.  Sequentially isn't a process or job control library, but this
+// allows you to do some simple things on the cheap.
+
+// This outputter never runs.
+var thread = outputter('never').eventually();
+thread.cancel();
+
+// This one runs for a second, and then half a second later runs
+// for another second.
+var thread = outputter('haltingly').periodically(100);
+(function() {thread.stop()}).only(2).periodically(1000);
+(function() {thread.start()}).eventually(1500);
+
+// ^ Miscellaneous
+
+// Here's a function that receives a different argument each time you
+// call it.
+var fn = outputter('incrementally').incrementally();
+fn(); fn(); fn();
+

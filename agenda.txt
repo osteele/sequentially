@@ -1,13 +1,22 @@
 * Next
 - fix double doc
 - reorganize apidoc to match examples
+- distinguish between complementizers (eventually, at, periodically, repeatedly)
+  and adverbs (only, infrequently, sequentially, incrementally)
+- periodically -> every?
+
+* Later
+- show how it works for motivating case
 - stream library
 - until, while, combinators a{n}0 ab*
+- once, never
 - eventually vs. fork
 - after, before, until, consecutively, following, consequently, continuously
 
 * Packaging
 - add test links
+
+The sentential adverbs really change verb (expression) -> statement.
 
 move to non-prototype functions to namespace
 should cyclicly = sequentially.repeatedly

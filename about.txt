@@ -1,19 +1,19 @@
 h1. Sequentially: Temporal and Frequency Adverbs for JavaScript
 
-<dfn><a href="/sources/javascript/sequentially">Sequentially</a></dfn> is a JavaScript library for asychronous programming.  It makes it easy to define functions that are called later, or periodically, or only a certain number of times, or only a certain number of times per unit time.
+<dfn><a href="/sources/javascript/sequentially">Sequentially</a></dfn> is a JavaScript library for asychronous programming.  It makes it easy to define functions that are called later, or periodically, or that can be called only a certain number of times, or only at a certain frequency.
 
 <code>
 <pre>
 // Run a function five times in a row
-fn.only(5).repeatedly()
+f.only(5).repeatedly()
 // Run a function five times, at one second intervals
-fn.only(5).periodically()
-// Make a new function that calls fn at most five times, no matter
+f.only(5).periodically()
+// Make a new function g that calls through to f at most five times, no matter
 // how often g is called
-g = fn.only(5)
-// Make a new functions that calls fn at most once per minute,
+var g = f.only(5)
+// Make a new function g that calls f at most once per minute,
 // no matter how frequently g is called
-g = fn.infrequently(60*1000)
+var g = f.infrequently(60*1000)
 // Apply a function to each of the elements of an array, at intervals
 // of once per second
 ['here', 'are', 'some', 'elements'].sequentially(
@@ -22,27 +22,29 @@ g = fn.infrequently(60*1000)
 </pre>
 </code>
 
-I made a <a href="/sources/javascript/sequentially">page of examples</a> where you can run these examples in your browser.  It lets you mouse over the source code to see which outputs came from each block, and click on the outputs to see which source code each one came from.  This makes it easier to see what's going on.
+You can run these examples in your browser on this <a href="/sources/javascript/sequentially">page of examples</a>.  Mouse over the source code to see which outputs came from each block.  Mouse over or click on the outputs to see which source code each one came from.
 
 h3. Why?
 
-I'd like to be able to use the Erlang paradigm for client/server code --- to write clients that use cheap and unreliable servers for everything except user account management, with failover and retries.
+I'd like to be able to use the Erlang paradigm for client/server code --- to write systems that survive component-wise failure, so that (for example) I can use cheap unreliable servers, with failover and retries.
 
 Recently I wrote an application that did this:
 
 Ask the content server for an image.  If it's not there, ask the application server to queue a request to the image server to create it.  Then check back with the content server again.  If the asset doesn't show up after a while, the application server may have been down or overloaded, so ask it again.  But I don't want my clients to mount a DDoS attack on an ailing server, so throttle the frequency of the requests, and give up after a while.
 
-My first pass at this was a tangled mess of domain logic, network requests, and control code.  It was way harder than it ought to have been, especially for such a general design a pattern.
+My first pass at this was a tangled mess of domain logic, network requests, and control code.  It was way more complex than it ought to have been, especially for such a general design pattern.
 
-The basic ideas here are really simple: repetition (keep asking, but not too many times) and frequency (...and not too frequently).  You can think of <dfn>Sequentially</dfn> as a tiny little domain-specific extension to JavaScript that adds the words for these concepts.
+The basic concepts here are simple: repetition (keep asking, but not too many times...) and frequency (...and not too frequently).  You can think of Sequentially as a tiny little domain-specific extension to JavaScript that defines words for these concepts.
 
 h3. Some Analogies
 
-I use this in a style I call "adverbial programming".  Someday I'll post an entry about the analogy between computer languages and natural languages; for now, simply note that methods such as "eventually" and "repeatedly" modify a function (a verb) to produce a new functions with a related meaning --- this is the same as (one of the three sense of) an adverb.
+I use this in a style I call "adverbial programming".  Someday I'll post an entry about the analogy between computer languages and natural languages; for now, simply note that methods such as "only" and "infrequently" modify a function (a verb) to produce a new functions with a related meaning --- this is the same as (one of the three sense of) an adverb.
 
 This is in contrast to procedural programming, which assembles statements into paragraphs; object-oriented programming, which is all about noun phrases; and functional programming, which is largely about verbs.  (Closures, which bridge the gap between the functional and OO style, are gerunds.)
 
-Here are some other analogies that I found helpful in thinking about how to think about this and where to go next.  You could think of Sequentially as a kind of memoization, where instead of caching the result it modifies <em>when</em> and<em>whether</em> a function is called.  Alternatively (and very loosely), it's the CPS conversion of the categorical dual of <a href="http://en.wikipedia.org/wiki/Generator_%28computer_science%29">generators</a> (modifying sinks instead of sources). Or, if you take the call graph of a program, turn that into a dataflow diagram, and implement that in OO, then Sequentially consists of decorators for the pipes.  Or maybe it's the Chu space dual of <a href="/sources/javascript/functional">Functional JavaScript</a>.  Oh, never mind, it's just a few combinators for frequency, iteration, and time.</p>
+Here are some other analogies that I found helpful in thinking about how to think about this and where to go next.  This is all kind of notional, but I found it useful.
+
+You could think of Sequentially as doing something like of memoization, where instead of caching the result it modifies <em>when</em> and<em>whether</em> a function is called.  Alternatively (and very loosely), it's the CPS conversion of the categorical dual of <a href="http://en.wikipedia.org/wiki/Generator_%28computer_science%29">generators</a> (it builds sinks instead of sources). Or, if you took the call graph of a program, turned that into a dataflow diagram, and implemented a dataflow interpreter, then Sequentially would override the implementation of some of the pipes.  Or maybe (again, loosely) it's a kind of Chu space dual of <a href="/sources/javascript/functional">Functional JavaScript</a> --- instead of collecting values (arguments) across state space, it distributes function calls across time.  Or maybe that's all overkill, and it's just a few combinators for frequency, iteration, and time.</p>
 
 
 Sequentially uses closures to embed (some of) the <a
