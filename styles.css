@@ -19,7 +19,7 @@ kbd:hover {color:#080}
 #intro {margin-bottom:5px}
 #intro p {padding: 5px}
 
-#messages {position:fixed; right:5px; bottom:5px; border:1px solid transparent}
+#messages {position:fixed; right:5px; bottom:5px; border:1px solid transparent; z-index:10}
 #messages {background:white;border:1px solid gray;}
 #messages.left {left:5px; right:inherit}
 #messages .left, #messages .right {position:absolute; top:1px; cursor:pointer; color:gray; font-size:large; border:1px solid white; padding-left:2px; padding-right:2px; text-decoration:none;}
@@ -40,7 +40,7 @@ table.docs {background:#f9f9f9}
 .runnable {color:blue;border:2px solid white}
 .runnable.selected {color:green; background:#dfd}
 .runnable:hover {cursor:pointer; background:#8f8; border:2px solid green}
-.instr {background:yellow}
+.startup-instructions {background:yellow}
 
 .timestamp {font-variant:small-caps; font-size:small; color:gray}
 

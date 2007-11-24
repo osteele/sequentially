@@ -9,41 +9,44 @@ var gMessageWindow;
 
 var Examples = {
     initialize: function(run) {
+        this.view = $('#examples')[0];
         Examples.format();
-        Examples.bind();
+        Examples.bindEvents();
         run && Examples.run();
     },
 
     format: function() {
-        var e = $('examples'),
+        var e = this.view,
             text = (e.innerHTML
                     .replace(/(<\/div>)((?:.+?\n)+)/g,
                             '$1<div class="runnable">$2</div>')
                     .replace(/(\(Click on(?:.|\n)*?\))/,
-                             '<span class="instr">$1</span>'));
+                             '<span class="startup-instructions">$1</span>'));
         e.innerHTML = text;
     },
 
-    bind: function() {
-        var e = $('examples'),
+    bindEvents: function() {
+        var self = this,
+            e = this.view,
             mw = gMessageWindow;
-        $$('#examples .runnable').each(function(item) {
-            var run = Examples.runOne.bind(null, item, true)
-            item.observe('mouseover', mw.highlightMessagesFrom.bind(mw, item));
-            item.observe('mouseout', mw.highlightMessagesFrom.bind(mw, null));
-            item.observe('click', run);
+        $('#examples .runnable').each(function() {
+            var item = this,
+                runner = self.runOne.bind(self, item, true);
+            $(item).click(runner);
+            $(item).mouseover(mw.highlightMessagesFrom.bind(mw, item));
+            $(item).mouseout(mw.highlightMessagesFrom.bind(mw, null));
         });
     },
 
     run: function() {
-        var e = $('examples');
-        $$('#examples .runnable').each(function(item) {
-            Examples.runOne(item);
+        var self = this;
+        $('#examples .runnable').each(function() {
+            self.runOne(this);
         });
     },
 
     runOne: function(item, clicked) {
-        clicked && $$('.instr').invoke('removeClassName', 'instr');
+        clicked && $('.startup-instructions').removeClass('startup-instructions');
         var mw = gMessageWindow,
             counters = {},
             text = item.innerHTML.replace(/&gt;/g, '>').replace(/&amp;/g, '&');
@@ -85,22 +88,19 @@ function MessageWindow() {
 
 MessageWindow.prototype = {
     initialize: function() {
-        this.bindEvents();
-        this.startClock();
         this.messages = [];
+        this.startClock();
+        this.bindEvents();
     },
 
     bindEvents: function() {
-        $$('#messages .left, #messages .right').map(function(e) {
-            e.observe('click', function() {
-                console.info(1, e);
-                $('messages').removeClassName('left').removeClassName('right').addClassName(e.className);
-            });
+        $('#messages .left, #messages .right').click(function() {
+            $('#messages').removeClass('left').removeClass('right').addClass(this.className);
         });
     },
 
     startClock: function() {
-        var clockDiv = $('clock');
+        var clockDiv = $('#clock')[0];
         ticker();
         function ticker() {
             clockDiv.innerHTML = new Date().toLocaleTimeString();
@@ -127,40 +127,35 @@ MessageWindow.prototype = {
         ].join('');
         messages.unshift(line);
         messages.splice(20, messages.length);
-        $('output').innerHTML = messages.map(function(line, ix) {
+        $('#output').html(messages.map(function(line, ix) {
             var opacity = 1 - .95*ix/messages.length;
             return ['<div style="opacity:', opacity,'">', line, '</div>'].join('');
-        }).join('');
+        }).join(''));
         if (src && src == this.highlighting)
             this.highlightMessagesFrom(src);
         // re-bind the events
         var self = this;
-        $$('#output .src').each(function(elt) {
-            elt.onclick = function() {
-                var id = elt.id.replace(/^_s_/, ''),
-                    src = $(id);
-                src.scrollTo();
-            }
-            elt.onmouseover = function() {
-                var id = elt.id.replace(/^_s_/, ''),
-                    src = $(id);
-                self.highlightMessagesFrom(id);
-                src.addClassName('selected');
-            }
-            elt.onmouseout = function() {
-                $$('#examples .selected, #messages .selected').invoke('removeClassName',
-                                                                      'selected');
-                this.highlighting = false;
-            }
+        $('#output .src').click(function() {
+            var id = this.id.replace(/^_s_/, ''),
+                src = $('#'+id)[0];
+            $.scrollTo(src, {speed:1000, easing:'elasout'});
+        }).mouseover(function() {
+            var id = this.id.replace(/^_s_/, ''),
+                src = $('#'+id);
+            self.highlightMessagesFrom(src[0]);
+            src.addClass('selected');
+        }).mouseout(function() {
+            $('#examples .selected, #messages .selected').removeClass('selected');
+            self.highlighting = false;
         });
     },
 
     highlightMessagesFrom: function(src) {
         this.highlighting = src;
-        $$('#messages .selected').invoke('removeClassName', 'selected');
+        $('#messages .selected').removeClass('selected');
         if (src) {
             var id = $(src).requireId();
-            $$('#messages .src-for-' + id).invoke('addClassName', 'selected');
+            $('#messages .src-for-' + id).addClass('selected');
         }
     }
 }
@@ -170,13 +165,23 @@ MessageWindow.prototype = {
  * Utilities
  */
 
-Element.nextId = 0;
+jQuery.fn.requireId = function() {
+    if (!this.length) return null;
+    var e = this[0],
+        id = e.id;
+    if (!id)
+        id = e.id = '_o_' + ++arguments.callee.nextId;
+    return id;
+}
 
-Element.addMethods({
-    requireId: function(e) {
-        var id = e.id;
-        if (!id)
-            id = e.id = '_o_' + ++Element.nextId;
-        return id;
-    }
-});
+jQuery.fn.requireId.nextId = 0;
+
+//borrowed from jQuery easing plugin
+//http://gsgd.co.uk/sandbox/jquery.easing.php
+$.easing.elasout = function(x, t, b, c, d) {
+    var s=1.70158;var p=0;var a=c;
+    if (t==0) return b;  if ((t/=d)==1) return b+c;  if (!p) p=d*.3;
+    if (a < Math.abs(c)) { a=c; var s=p/4; }
+    else var s = p/(2*Math.PI) * Math.asin (c/a);
+    return a*Math.pow(2,-10*t) * Math.sin( (t*d-s)*(2*Math.PI)/p ) + c + b;
+};

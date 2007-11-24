@@ -4,11 +4,6 @@ outputter('sequentially').
   sequentially('a few words'.split(' ')).
   periodically(1000, {backoff:true});
 
-Here's a function that
-// receives a different argument each time you call it.
-var fn = outputter('incrementally').incrementally();
-fn(); fn(); fn();
-
 alternating(loadImage, createImage).only(100).periodically(1000);
 
 var fn = function(){return 1}.eventually();
