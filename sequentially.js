@@ -140,7 +140,6 @@ Function.prototype.infrequently = function(interval, options) {
  * this function to the next element each.of the array, finally returning
  * `Sequentially.nil`. */
 Function.prototype.sequentially = function(array, thisObject) {
-    options = options || {};
     var fn = this,
         ix = -1;
     return next;
@@ -181,7 +180,6 @@ Sequentially.cyclicly = function() {
  * (as `this`), the array element, and its index.
  */
 Array.prototype.sequentially = function(fn, ms, thisObject) {
-    options = options || {};
     var array = this,
         ix = -1;
    return next;
