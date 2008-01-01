@@ -22,6 +22,10 @@ var Examples = {
                             '$1<div class="runnable">$2</div>')
                     .replace(/(\(Click on(?:.|\n)*?\))/,
                              '<span class="startup-instructions">$1</span>'));
+        if ($('#examples .runnable') <= 1) {
+            $('#noscript').html().show();
+            $('#message').hide();
+        }
         e.innerHTML = text;
     },
 

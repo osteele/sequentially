@@ -26,15 +26,17 @@ You can run these examples in your browser on this <a href="/sources/javascript/
 
 h3. Why?
 
-I'd like to be able to use the Erlang paradigm for client/server code --- to write systems that survive component-wise failure, so that (for example) I can use cheap unreliable servers, with failover and retries.
-
 Recently I wrote an application that did this:
 
 Ask the content server for an image.  If it's not there, ask the application server to queue a request to the image server to create it.  Then check back with the content server again.  If the asset doesn't show up after a while, the application server may have been down or overloaded, so ask it again.  But I don't want my clients to mount a DDoS attack on an ailing server, so throttle the frequency of the requests, and give up after a while.
 
+Why?  I'd like to be able to run client applications that present data from a cluster of unreliable commodity hardware.   This means these clients must survive component-wise server failure: they should implement retries (when a server is temporarily overloaded), that transitions to failover (when it's out for the count).
+
 My first pass at this was a tangled mess of domain logic, network requests, and control code.  It was way more complex than it ought to have been, especially for such a general design pattern.
 
-The basic concepts here are simple: repetition (keep asking, but not too many times...) and frequency (...and not too frequently).  You can think of Sequentially as a tiny little domain-specific extension to JavaScript that defines words for these concepts.
+The basic concepts here are simple: repetition (keep asking, but not too many times...) and frequency (...and not too frequently).
+
+You can think of Sequentially as a tiny little domain-specific extension to JavaScript that defines words for these concepts.
 
 h3. Some Analogies
 
