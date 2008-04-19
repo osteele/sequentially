@@ -3,7 +3,7 @@
 .\#*
 *.orig
 
-processes.api.html
+sequentially.api.html
 
 *.min.js
 *.gz

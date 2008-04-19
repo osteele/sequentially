@@ -3,7 +3,8 @@
  * Copyright: Copyright 2007 by Oliver Steele.  All rights reserved.
  * License: MIT License
  * Homepage: http://osteele.com/javascripts/sequentially
- * Version: 1.0preview2
+ * Repository: http://github.com/osteele/sequentially
+ * Version: 1.1
  */
 
 
@@ -216,5 +217,67 @@ Function.prototype.incrementally = function() {
     return function() {
         args[0] += 1;
         return fn.apply(this, args.concat(Array.slice(arguments)));
+    }
+}
+
+var Sequentially = {
+    trickle: {
+        /** Call `fn` on each element of `array`, and finally call `k`.
+          * The function is applied to a slice of elements until
+          * `ms` has elapsed; the caller then waits a frame before
+          * applying it to the next slice.
+          */
+        forEach: function(array, fn, ms, k) {
+            var i = 0;
+            return schedule();
+            function schedule() {
+                // check the length each time, in case it changes
+                if (i >= array.length) {
+                    if (!i)
+                        // on next tick, to minimize code path count
+                        return setTimeout(function() { k && k() }, 10);
+                    return k && k();
+                }
+                return setTimeout(next, 10);
+            }
+            function next() {
+                var t0 = new Date;
+                while (i < array.length) {
+                    fn(array[i++]);
+                    if (new Date - t0 > ms)
+                        break;
+                }
+                schedule();
+            }
+        },
+        
+        /** Call `fn` on each element of `array`, collecting the results
+          * into an array that is returned and passed as an argument to
+          * `k`.  The function is applied to a slice of elements until
+          * `ms` has elapsed; the caller then waits a frame before
+          * applying it to the next slice.  The return value is initially
+          * empty.
+          */
+        map: function(array, fn, ms, k) {
+            var i = 0,
+                results = [];
+            schedule();
+            return results;
+            function schedule() {
+                // check the length each time, in case it changes
+                if (i >= array.length)
+                    return k && k(results);
+                setTimeout(next, 10);
+            }
+            function next() {
+                var t0 = new Date;
+                while (i < array.length) {
+                    results[i] = fn(array[i++]);
+                    if (new Date - t0 > ms)
+                        break;
+                }
+                schedule();
+            }
+        }
     }
 }
