@@ -1,4 +1,28 @@
-/* Copyright 2008 by Oliver Steele.  All rights reserved. */
+/* Copyright 2008 by Oliver Steele.  All rights reserved.
+ * Available under the MIT License.
+ */
+
+/* Calls `fn`, and returns its value.  Within the dynamic extent
+ * of the call, the {set,clear}{Timeout,Interval} family of functions
+ * is replaced by an implementation that manages its own scheduling,
+ * and then runs functions in order by their scheduled time, but
+ * before `withMockTimers` returns and without paying attention to
+ * real time.
+ */
+function withMockTimers(fn) {
+    var result;
+    MockTimers.install();
+    try {
+        result = fn();
+        MockTimers.run();
+    } catch (ex) {
+        // some version of MSIE can't parse 'finally'
+        MockTimers.remove();
+        throw ex;
+    }
+    MockTimers.remove();
+    return result;
+}
 
 var MockTimers = {
     install: function() {
@@ -64,17 +88,3 @@ var MockTimers = {
         }
     }
 }
-
-function withMockTimers(fn) {
-    MockTimers.install();
-    try {
-        fn();
-        MockTimers.run();
-    } catch (ex) {
-        // some version of MSIE can't parse 'finally'
-        MockTimers.remove();
-        throw ex;
-    }
-    MockTimers.remove();
-}
-

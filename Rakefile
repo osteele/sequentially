@@ -1,6 +1,13 @@
+require 'rake/rdoctask'
+
 MIN = 'sequentially.min.js'
 MIN_GZ = MIN + '.gz'
 RHINO = "java -cp $RHINO_HOME:$XBEAN_HOME:$CLASSPATH org.mozilla.javascript.tools.shell.Main"
+
+Rake::RDocTask.new do |rd|
+  rd.main = "README"
+  rd.rdoc_files.include("README", "CHANGES")
+end
 
 desc "Upload to my web site"
 task :publish => MIN_GZ do
@@ -19,6 +26,6 @@ file MIN_GZ => MIN do |t|
 end
 
 desc "experimental doc maker"
-task :doc do
+task :jsdoc do
   sh "cd ../protodoc && #{RHINO} protodoc.run.js ../sequentially/sequentially.js > ../sequentially/sequentially.api.html"
 end

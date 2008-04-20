@@ -1,0 +1,33 @@
+= Sequentially
+
+Sequentially is a library of temporal and frequency adverbs for
+JavaScript.  It provides methods to queue a function for deferred or
+periodic execution, and to throttle the rate or number of times that a
+function can be called.  You could think of it as a kind of
+memoization, where instead of caching the result it modifies *when*
+and *whether* a function is called.
+
+The {demo page}[http://osteele.com/sources/javascript/sequentially]
+contains API documentation and interactive examples for most of the
+functions.  I've added a couple of functions more recently that aren't
+on that page, but are in the specs[http://osteele.com/sources/javascript/sequentially/specs] instead:
+
+  Sequentially.trickle.forEach(array, fn, ms, k)
+
+Call +fn+ on each element of +array+, and finally call +k+.  The
+function is applied to a slice of elements until +ms+ has elapsed; the
+caller then waits a frame before applying it to the next slice.
+
+
+  Sequentially.trickle.map(array, fn, ms, k)
+
+Call +fn+ on each element of +array+, collecting the results into an
+array that is returned and passed as an argument to +k+.  The function
+is applied to a slice of elements until +ms+ has elapsed; the caller
+then waits a frame before applying it to the next slice.  The return
+value is initially empty.
+
+== License
+
+Copyright 2007-2008 by Oliver Steele.  All rights reserved.
+Available under the MIT License.
